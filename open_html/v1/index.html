@@ -1,31 +1,48 @@
 <!DOCTYPE html>
-<html dir="ltr" lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <title>Open HTML by Small HTMLs</title>
-    <style media="screen">
-      body, html
-            {
-                margin: 0; padding: 0; height: 100%; overflow: hidden;
+<html dir="ltr" lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <meta charset="utf-8" />
+        <title>Open HTML by Small HTMLs</title>
+        <style media="screen">
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                overflow: hidden;
             }
-    </style>
-  </head>
-  <body>
-    <div style="background-color:#000000;color:#ffffff;top:-20px;font-size:20px" height="5%">
-      |<a href="/open_html/" style="text-decoration: none; color: #ffffff; text-align: right;">&nbsp;&nbsp;&nbsp;&larr;&nbsp;&nbsp;&nbsp;</a>|<label for="fileinput" id="lablefileinput">&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;</label>|
-    <input id="fileinput" type="file" onchange="change();" style="position: absolute; left: -1000px">
-    </div>
-    <iframe id="iframe1" width="100%" height="95%" frameborder="0">
-      </iframe>
-      <script>
-        function change(){
-          var files = document.getElementById("fileinput").files;
-          if(files.lenght === 0){return;}
-          if(files.lenght >=  2){return;}
-          var file = files[0];
-          document.getElementById("iframe1").src = URL.createObjectURL(file);
-        }
-        </script>
-  
-
-</body></html>
+        </style>
+    </head>
+    <body>
+        <div
+            style="
+                background-color: #000000;
+                color: #ffffff;
+                top: -20px;
+                font-size: 20px;
+            "
+            height="5%"
+        >
+            |<a
+                href="/open_html/"
+                style="text-decoration: none; color: #ffffff; text-align: right"
+                >&nbsp;&nbsp;&nbsp;&larr;&nbsp;&nbsp;&nbsp;</a
+            >|<label for="fileinput" id="lablefileinput"
+                >&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;</label
+            >|
+            <input
+                id="fileinput"
+                type="file"
+                style="position: absolute; left: -1000px"
+            />
+        </div>
+        <iframe id="iframe1" width="100%" height="95%" frameborder="0">
+        </iframe>
+        <script
+            src="/assets/js/dist/open_html/v1/index.js"
+            type="module"
+            async
+        ></script>
+    </body>
+</html>
