@@ -1,5 +1,3 @@
-# Write a workflow ran on push or pull request merge, that installs bun and runs a command
-
 name: Build Assets
 on:
     push:
