@@ -2,7 +2,7 @@ name: Build Assets
 on:
     push:
         branches:
-            - master
+            - main
 
 jobs:
     build:
