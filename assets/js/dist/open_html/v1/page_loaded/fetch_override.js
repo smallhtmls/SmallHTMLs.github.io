@@ -1,0 +1,1 @@
+var g=window.fetch,k=window.top.currFiles;window.fetch=(w,I)=>{if(typeof w==="string"&&!w.startsWith("http")){const b=k[w];if(b)return g(b,I);else return new Promise((j)=>{j(new Response("Not found\nOpen HTML / v1",{status:404}))})}return g(w,I)};
