@@ -1,0 +1,215 @@
+:root {
+    --text-color: black;
+    --background-color: #f0e0f7;
+    --even-font: "Courier New";
+    --uneven-font: "Arial";
+}
+.svgText {
+    fill: var(--text-color);
+    font: normal 15px var(--uneven-font);
+}
+html,
+body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+main {
+    display: grid;
+    grid-template-columns: repeat(2, 50vw);
+    grid-template-rows: repeat(2, 47.5vh);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    flex-grow: 1;
+}
+#cpu {
+    background-color: var(--background-color);
+}
+#storage {
+    background-color: var(--background-color);
+}
+#documentation {
+    background-color: var(--background-color);
+}
+#code {
+    background-color: var(--background-color);
+}
+.dataBusNumber {
+    font-family: "Courier New";
+}
+#accumulatorText {
+    font: normal 15px "Courier New";
+}
+#accumulatorTitle {
+    font: normal 20px var(--uneven-font);
+}
+.busName {
+    font: bold 20px var(--uneven-font);
+}
+#controlBusTitle {
+    font: bold 15px sans-serif;
+}
+
+.defaultLine {
+    stroke: var(--text-color);
+}
+.defaultFill {
+    fill: var(--text-color);
+}
+.blackRect {
+    stroke: var(--text-color);
+}
+.stdLine {
+    stroke: var(--text-color);
+    fill: transparent;
+    stroke-width: 3px;
+}
+.stdRect {
+    fill: transparent;
+}
+.headerItem {
+    height: 100%;
+    width: fit-content;
+}
+#header {
+    display: block;
+    width: 100vw;
+    height: 5vh;
+    background-color: rgb(29, 29, 29);
+    color: white;
+}
+#backButton {
+    height: 100%;
+    font-size: 2em;
+    text-align: center;
+    justify-content: center;
+    vertical-align: middle;
+    color: white;
+    text-decoration: none;
+    padding-right: 0.4vw;
+    padding-bottom: 2vh;
+    border-top-right-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    background-color: rgb(51, 51, 51);
+}
+#storage {
+    overflow: scroll;
+}
+#ramTable {
+    width: 100%;
+    font-family: "Courier New", Courier, monospace;
+    text-align: right;
+}
+.userChanged {
+    color: red;
+    font-weight: bold;
+}
+.processChanged {
+    color: blue;
+    font-weight: bold;
+}
+#codeTextArea {
+    width: 100%;
+    max-width: 100%;
+    min-height: 50%;
+}
+#assembleButton {
+    float: right;
+}
+.button {
+    color: var(--text-color);
+    border-radius: 0;
+    border-style: solid;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: larger;
+    background-color: transparent;
+}
+.valueInCell {
+    font-weight: bold;
+}
+#cpuImg {
+    height: 100%;
+}
+#openFile {
+    border-style: solid;
+    border-radius: 0;
+    border-width: 1px;
+}
+#statusRegister {
+    font: normal 15px var(--even-font);
+}
+.controlButtonSymbol {
+    font: bold 50px sans-serif;
+}
+#darkmodeContainer {
+    float: right;
+    width: fit-content;
+    height: fit-content;
+}
+sasm-checkbox {
+    width: 1em;
+    height: 1em;
+    margin-right: 0.5em;
+    border: #333 solid 1px;
+    border-radius: 5px;
+    margin-left: 0.5em;
+}
+sasm-checkbox::before {
+    content: "X";
+    font-size: 2em;
+    position: relative;
+    top: 0.2em;
+    left: 0em;
+}
+sasm-checkbox[checked="true"]::before {
+    content: "✓";
+    position: relative;
+    top: 0.2em;
+}
+#documentation {
+    padding: 1em;
+    font-family: var(--uneven-font);
+}
+.fscButton {
+    font-size: 20px;
+    padding-inline: 1em;
+    width: fit-content;
+    height: fit-content;
+}
+#codeFSC {
+    float: right;
+}
+#cpuFSC {
+    float: right;
+}
+#documentationFSC {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+.fscButton:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+.strucTableInstrc {
+    font-family: var(--even-font);
+}
+#documentationOuter {
+    overflow-y: scroll;
+    overflow-x: auto;
+    background-color: var(--background-color);
+}
+#version {
+    float: right;
+    font-size: 1.2em;
+    margin-right: 2em;
+}

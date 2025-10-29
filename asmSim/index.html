@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AsmSimulation</title>
+        <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+        <link href="index.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="header">
+            <a class="headerItem" id="backButton" href="https://smallhtmls.github.io">🠜</a>
+            <!--   <select onchange="updateMem();" id="bitModeSelector">
+                <option value="8">8bit</option>
+                <option value="16" selected>16bit</option>
+                <option value="32">32bit</option>
+                <option value="64">64bit</option>
+            </select>-->
+
+            <div class="headerItem" id="darkmodeContainer">Darkmode: <sasm-checkbox id="darkmodeToggle"></sasm-checkbox></div>
+            <div id="version">Version: <span style="color: red">Beta</span> 0.0.1</div>
+        </div>
+        <main>
+            <div id="cpu">
+                <div class="fscButton" id="cpuFSC">⛶</div>
+                <svg viewbox="0 0 800 500" id="cpuImg">
+                    <defs>
+                        <!-- A marker to be used as an arrowhead -->
+                        <marker class="defaultLine defaultFill" id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" />
+                        </marker>
+                    </defs>
+                    <g id="accumulator" transform="translate(125 185)">
+                        <text class="svgText" id="accumulatorTitle" x="3" y="15">Akkumulator</text>
+                        <text class="svgText" id="accumulatorText" x="8" y="47">0</text>
+                        <rect x="0" y="30" width="200" height="30" fill="rgba(0,128,255,0.5)"></rect>
+                    </g>
+                    <g id="alu" transform="translate(350 250)">
+                        <line x1="0" x2="20" y1="0" y2="0" class="stdLine" />
+                        <line x1="50" x2="70" y1="0" y2="0" class="stdLine" />
+                        <line x1="20" x2="50" y1="70" y2="70" class="stdLine" />
+                        <line x1="0" x2="20" y1="0" y2="70" class="stdLine" />
+                        <line x1="70" x2="50" y1="0" y2="70" class="stdLine" />
+                        <line x1="50" x2="35" y1="0" y2="35" class="stdLine" />
+                        <line x1="20" x2="35" y1="0" y2="35" class="stdLine" />
+                        <text class="svgText" x="-30" y="80">ALU</text>
+                    </g>
+                    <!--MAIN RECTS - CPU-->
+                    <rect x="10" y="10" width="450" height="450" stroke="red" fill="transparent"></rect>
+                    <!--MAIN RECTS - RAM-->
+                    <rect x="700" y="10" width="450" height="450" stroke="red" fill="transparent"></rect>
+                    <!--Control System-->
+                    <g id="controlSystem" transform="translate(150 25)">
+                        <rect x="0" y="0" width="300" height="130" stroke="blue" class="stdRect" />
+                        <rect x="5" y="5" width="50" height="50" stroke="green" class="stdRect" />
+                        <text x="10" y="52" class="controlButtonSymbol svgText" onclick="Processor.run();">⥁</text>
+                        <rect x="70" y="5" width="50" height="50" stroke="green" class="stdRect" />
+                        <text x="75" y="50" class="controlButtonSymbol svgText" onclick="Processor.step();">⟳</text>
+                        <rect x="135" y="5" width="50" height="50" stroke="green" class="stdRect"></rect>
+                        <text x="150" y="50" class="controlButtonSymbol svgText" onclick="Processor.smallStep();">⤸</text>
+                        <rect x="200" y="5" width="50" height="50" stroke="green" class="stdRect" onclick="Processor.stop();"></rect>
+                        <text x="212" y="45" class="controlButtonSymbol svgText" onclick="Processor.stop();">⏹</text>
+                        <text class="svgText" x="10" y="72">Befehl:</text>
+                        <rect x="10" y="80" width="75" height="30" class="stdRect blackRect"></rect>
+                        <rect x="85" y="80" width="200" height="30" class="stdRect blackRect"></rect>
+                        <text class="svgtext" id="instructionId" x="12" y="100"></text>
+                        <text class="svgtext" id="instructionData" x="90" y="100"></text>
+                    </g>
+                    <!---->
+
+                    <text class="svgText busName" x="530" y="50">Steuerbus</text>
+                    <text class="svgText" x="500" y="90" id="controlBusState"></text>
+                    <line x1="470" y1="100" x2="690" y2="100" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="green"></line>
+                    <text class="svgText busName" x="530" y="150">Addressbus</text>
+                    <text class="svgText" x="500" y="180" id="addressBusState"></text>
+                    <line x1="470" y1="200" x2="690" y2="200" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="red"></line>
+                    <text class="svgText busName" x="530" y="300">Datenbus</text>
+                    <line x1="480" y1="355" x2="680" y2="355" stroke-width="5" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="blue" />
+                    <!---->
+                    <text class="svgText" x="20" y="30">Program-</text>
+                    <text class="svgText" x="20" y="50">Zähler:</text>
+                    <rect x="15" y="60" width="130" height="30" fill="transparent" stroke="red"></rect>
+                    <text class="svgText" x="20" y="80" id="programCounter">0</text>
+                    <path d="M 120 100 l 0 20 l 20 0" marker-start="url(#arrow)" marker-end="url(#arrow)" stroke="cyan" stroke-width="3px" fill="transparent" />
+                    <text class="svgText" x="480" y="305">
+                        <tspan x="480" dy="15px" class="dataBusNumber"></tspan>
+                        <tspan x="480" dy="15px" class="dataBusNumber"></tspan>
+                    </text>
+                    <text class="svgText" x="490" y="380" id="dataBusBit"></text>
+                    <!--ALU - DATA BUS-->
+                    <path d="M 470 355 l -30 0 l 0 -130 l -30 0 l 0 20" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path d="M 470 355 l -30 0 l 0 -190" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <!--AX - DATA BUS-->
+                    <path d="M 470 355 l -30 0 l 0 30 l -190 0 l 0 -130" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path d="M 470 355 l -30 0 l 0 30 l -165 0 l 0 -130" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path d="M 275 253 l 0 1" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <!--ALU-AX-->
+                    <path d="M 380 320 l 0 30 l -80 0 l 0 -95" marker-end="url(#arrow)" stroke="gold" fill="transparent" stroke-width="3px" />
+                    <path d="M 390 320 l 0 95" marker-end="url(#arrow)" stroke="gold" fill="transparent" stroke-width="3px" />
+                    <path d="M 325 230 l 35 0 l 0 15" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <!--Status Register-->
+                    <rect class="blackRect" x="280" y="420" width="170" height="30" fill="transparent" stroke="black" />
+                    <text class="svgText" x="300" y="437" id="statusRegister">Z:0 N:0 V:0 C:0</text>
+                </svg>
+            </div>
+            <div id="storage"><div class="fscButton" id="storageFSC">⛶</div></div>
+            <div id="code">
+                <select class="button" id="assembleSelect">
+                    <option value="mini@asm" id="">mini@asm</option></select
+                ><input id="openFile" type="file" /><button class="button" id="saveFile">Speichern</button>
+                <div class="fscButton" id="codeFSC">⛶</div>
+                <button id="assembleButton" class="button" onclick="assemble();">Assemblieren</button>
+
+                <div id="editor" style="height: 90%; width: 100%; border: 1px solid #ccc"></div>
+            </div>
+            <div id="documentationOuter">
+                <div class="fscButton" id="documentationFSC">⛶</div>
+                <div id="documentation">
+                    <h1>Documentation</h1>
+                    <p>This project is inspired by the "Minimashine" Albert Wiedemann designed: <a href="https://schule.awiedemann.de/minimaschine.html">here</a></p>
+                    <h2>Support</h2>
+                    <p>This project currently only support the Minimashine Assembler Instructions (here: mini@asm)</p>
+                    <h2>Instructions</h2>
+                    <table id="strucTable">
+                        <thead>
+                            <tr>
+                                <td>INSTR.</td>
+                                <td>Opcode</td>
+                                <td>Description</td>
+                            </tr>
+                        </thead>
+                        <tbody id="strucTableBody"></tbody>
+                    </table>
+                    <h2>Contact</h2>
+                    <a href="mailto://noahp07.schools@gmail.com">noahp07.schools@gmail.com</a>
+                </div>
+            </div>
+        </main>
+        <script src="./miniasm.js"></script>
+        <script src="./editor.js"></script>
+        <script src="./elements.js"></script>
+        <script src="./display.js"></script>
+        <script src="./CPU.js"></script>
+    </body>
+</html>
