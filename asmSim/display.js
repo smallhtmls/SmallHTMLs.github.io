@@ -159,7 +159,7 @@ DARK_MODE_TOGGLE_E.onclick = () => {
     if (DARK_MODE_TOGGLE_E.getAttribute("checked") === "true") {
         DARK_MODE_TOGGLE_E.setAttribute("checked", "false");
         // LIGHT MODE
-        setStyle("black", "#f0e0f7", "vs-light");
+        setStyle("black", "white", "vs-light");
     } else {
         // DARK MODE
         DARK_MODE_TOGGLE_E.setAttribute("checked", "true");
