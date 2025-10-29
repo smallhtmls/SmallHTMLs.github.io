@@ -1,1 +1,1 @@
-setInterval(()=>{const n=document.querySelector("title");if(n)window.top.updateWindowTitle(n.innerText)},300);
+setInterval(()=>{let t=document.querySelector("title");if(t)window.top.updateWindowTitle(t.innerText)},300);

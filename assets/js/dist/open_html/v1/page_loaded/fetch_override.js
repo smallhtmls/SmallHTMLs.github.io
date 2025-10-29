@@ -1,1 +1,2 @@
-var g=window.fetch,k=window.top.currFiles;window.fetch=(w,I)=>{if(typeof w==="string"&&!w.startsWith("http")){const b=k[w];if(b)return g(b,I);else return new Promise((j)=>{j(new Response("Not found\nOpen HTML / v1",{status:404}))})}return g(w,I)};
+var n=window.fetch,r=window.top.currFiles;window.fetch=(e,s)=>{if(typeof e==="string"&&!e.startsWith("http")){let t=r[e];if(t)return n(t,s);else return new Promise((o)=>{o(new Response(`Not found
+Open HTML / v1`,{status:404}))})}return n(e,s)};

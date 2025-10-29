@@ -1,1 +1,1 @@
-var N=document.getElementById("status"),R=new URLSearchParams(window.location.search),O=R.get("status");if(O)N.innerText=O;else N.innerText="ERR_NOT_FOUND";
+var t=document.getElementById("status"),s=new URLSearchParams(window.location.search),e=s.get("status");if(e)t.innerText=e;else t.innerText="ERR_NOT_FOUND";
