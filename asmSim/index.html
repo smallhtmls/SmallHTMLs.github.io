@@ -75,7 +75,7 @@
                     <text class="svgText" x="500" y="180" id="addressBusState"></text>
                     <line x1="470" y1="200" x2="690" y2="200" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="red"></line>
                     <text class="svgText busName" x="530" y="300">Datenbus</text>
-                    <line x1="480" y1="355" x2="680" y2="355" stroke-width="5" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="blue" />
+
                     <!---->
                     <text class="svgText" x="20" y="30">Program-</text>
                     <text class="svgText" x="20" y="50">Zähler:</text>
@@ -101,9 +101,12 @@
                     <!--Status Register-->
                     <rect class="blackRect" x="280" y="420" width="170" height="30" fill="transparent" stroke="black" />
                     <text class="svgText" x="300" y="437" id="statusRegister">Z:0 N:0 V:0 C:0</text>
+                    <line x1="480" y1="355" x2="680" y2="355" stroke-width="5" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="blue" />
                 </svg>
             </div>
-            <div id="storage"><div class="fscButton" id="storageFSC">⛶</div></div>
+            <div id="storage">
+                <div class="fscButton" id="storageFSC">⛶</div>
+            </div>
             <div id="code">
                 <select class="button" id="assembleSelect">
                     <option value="mini@asm" id="">mini@asm</option></select
@@ -117,14 +120,17 @@
                 <div class="fscButton" id="documentationFSC">⛶</div>
                 <div id="documentation">
                     <h1>Documentation</h1>
-                    <p>This project is inspired by the "Minimashine" Albert Wiedemann designed: <a href="https://schule.awiedemann.de/minimaschine.html">here</a></p>
+                    <p>
+                        This project is inspired by the "Minimaschine" Albert Wiedemann designed:
+                        <a href="https://schule.awiedemann.de/minimaschine.html">here</a>
+                    </p>
                     <h2>Support</h2>
-                    <p>This project currently only support the Minimashine Assembler Instructions (here: mini@asm)</p>
+                    <p>This project currently only supports the Minimaschine Assembler Instructions (here: mini@asm)</p>
                     <h2>Instructions</h2>
                     <table id="strucTable">
                         <thead>
                             <tr>
-                                <td>INSTR.</td>
+                                <td>instr.</td>
                                 <td>Opcode</td>
                                 <td>Description</td>
                             </tr>
