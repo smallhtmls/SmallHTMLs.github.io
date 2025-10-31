@@ -27,13 +27,13 @@ const FILTER_15th_BIT = 1n << 15n;
 function decode(key_i) {
     return MINIMASHINE_ASM_DECODE_TABLE_S[key_i];
 }
-const toSigned = x => (x & 0x8000n ? x - 0x10000n : x);
+const toSigned = (x) => (x & 0x8000n ? x - 0x10000n : x);
 /**
  * The CPU
  */
 class CPU {
     execute() {
-        let iq = v => this.currentInstruction_i == v;
+        let iq = (v) => this.currentInstruction_i == v;
         let calcDat_i;
         switch (this.currentInstruction_i) {
             // MATH
@@ -87,7 +87,10 @@ class CPU {
                 break;
             case SUB_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
-                this.setAccu(((this.accumulator_i & 0xffffn) - (calcDat_i & 0xffffn)) & 0xffffn);
+                this.setAccu(
+                    ((this.accumulator_i & 0xffffn) - (calcDat_i & 0xffffn)) &
+                        0xffffn
+                );
                 break;
 
             case MUH_ACC_MEM:
@@ -200,7 +203,10 @@ class CPU {
                 this.setAccu(this.instructionData_i);
                 break;
             case MOV_ACC_MEM:
-                this.ram.write(Number(this.instructionData_i), this.accumulator_i);
+                this.ram.write(
+                    Number(this.instructionData_i),
+                    this.accumulator_i
+                );
                 break;
             case MOV_CRY_ACC:
                 this.setAccu(this.statusRegister[FLAG_CARRIER] ? 1n : 0n);
@@ -228,28 +234,48 @@ class CPU {
                 this.setStatusRegister(FLAG_NEGATIVE, calcDat_i < 0);
                 break;
             case JLT_MEM_NUL:
-                if (!this.statusRegister[FLAG_ZERO] && this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
+                if (
+                    !this.statusRegister[FLAG_ZERO] &&
+                    this.statusRegister[FLAG_NEGATIVE]
+                )
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case JLE_MEM_NUL:
-                if (this.statusRegister[FLAG_ZERO] || this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
+                if (
+                    this.statusRegister[FLAG_ZERO] ||
+                    this.statusRegister[FLAG_NEGATIVE]
+                )
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case JGT_MEM_NUL:
-                if (!this.statusRegister[FLAG_ZERO] && !this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
+                if (
+                    !this.statusRegister[FLAG_ZERO] &&
+                    !this.statusRegister[FLAG_NEGATIVE]
+                )
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case JGE_MEM_NUL:
-                if (this.statusRegister[FLAG_ZERO] || !this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
+                if (
+                    this.statusRegister[FLAG_ZERO] ||
+                    !this.statusRegister[FLAG_NEGATIVE]
+                )
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case JNE_MEM_NUL:
-                if (this.statusRegister[FLAG_ZERO]) this.setProgramCounter(Number(this.instructionData_i));
+                if (this.statusRegister[FLAG_ZERO])
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case JEQ_MEM_NUL:
-                if (this.statusRegister[FLAG_ZERO]) this.setProgramCounter(Number(this.instructionData_i));
+                if (this.statusRegister[FLAG_ZERO])
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case JOV_MEM_NUL:
-                if (this.statusRegister[FLAG_OVERFLOW]) this.setProgramCounter(Number(this.instructionData_i));
+                if (this.statusRegister[FLAG_OVERFLOW])
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case JOC_MEM_NUL:
-                if (this.statusRegister[FLAG_CARRIER]) this.setProgramCounter(Number(this.instructionData_i));
+                if (this.statusRegister[FLAG_CARRIER])
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case JMP_MEM_NUL:
                 this.setProgramCounter(Number(this.instructionData_i));
@@ -285,7 +311,12 @@ class CPU {
     setStatusRegister(flag_i, val_b) {
         if (this.statusRegister[flag_i] != val_b) {
             this.statusRegister[flag_i] = val_b;
-            updateStatusRegister(this.statusRegister[0], this.statusRegister[1], this.statusRegister[2], this.statusRegister[3]);
+            updateStatusRegister(
+                this.statusRegister[0],
+                this.statusRegister[1],
+                this.statusRegister[2],
+                this.statusRegister[3]
+            );
         }
     }
     incProgramCounter() {
@@ -326,7 +357,10 @@ class CPU {
                 this.incProgramCounter();
                 break;
             case STEP_LOAD_DATA:
-                this.instructionData_i = this.ram.read(this.prgCounter_n, this.ram.byteCount_i);
+                this.instructionData_i = this.ram.read(
+                    this.prgCounter_n,
+                    this.ram.byteCount_i
+                );
                 setInstructionData(this.instructionData_i);
                 this.incProgramCounter();
                 break;
@@ -346,7 +380,10 @@ class CPU {
         this.step_n++;
     }
     setAccu(accu_i, isUnsigned = false) {
-        this.setStatusRegister(isUnsigned ? FLAG_CARRIER : FLAG_OVERFLOW, accu_i > 0xffffn / 2n || accu_i < -(0xffffn / 2n));
+        this.setStatusRegister(
+            isUnsigned ? FLAG_CARRIER : FLAG_OVERFLOW,
+            accu_i > 0xffffn / 2n || accu_i < -(0xffffn / 2n)
+        );
         this.accumulator_i = accu_i & 0xffffn;
         setAccuDisplay(this.accumulator_i);
     }
@@ -362,7 +399,10 @@ class RAM {
     constructor() {
         this.bitMode = 0n;
         this.bitCount_i = 0n;
-        this.storage = Array.from({ length: Number(CONFIG.MEMORY_SIZE / 2n) }, m => 0n);
+        this.storage = Array.from(
+            { length: Number(CONFIG.MEMORY_SIZE / 2n) },
+            (m) => 0n
+        );
     }
     write(addr_n, data_i) {
         setControlBus(STATE_WRITE);
@@ -416,7 +456,8 @@ class RAM {
     translateMinimashineAsmKey(val_s, line_n) {
         val_s = val_s.trim().toUpperCase();
         for (const key in MINIMASHINE_ASM_DECODE_TABLE_S) {
-            if (MINIMASHINE_ASM_DECODE_TABLE_S[key] === val_s) return BigInt(key);
+            if (MINIMASHINE_ASM_DECODE_TABLE_S[key] === val_s)
+                return BigInt(key);
         }
         alert("Opcode not found for: " + val_s + " in line: " + line_n);
         return 0n;
@@ -429,7 +470,9 @@ class RAM {
             return 0n;
         }
         if (!isIn(val, this.bitMode)) {
-            alert("Val not in range 0.." + this.bitMode + " in line: " + line_n);
+            alert(
+                "Val not in range 0.." + this.bitMode + " in line: " + line_n
+            );
             return 0n;
         }
         return val;
@@ -443,7 +486,8 @@ class RAM {
             line_s = line_s.trim();
             if (line_s.endsWith(":")) {
                 const tag = line_s.slice(0, line_s.length - 1);
-                tag_address_m[tag] = memAddr_n;
+                tag_address_m[tag] = BigInt(memAddr_n);
+                //memAddr_n += 2;
                 continue;
             }
             if (line_s == "" || line_s.startsWith(";")) continue;
@@ -458,8 +502,8 @@ class RAM {
             let val_s = cols_as[1];
             if (val_s) val_s = val_s.trim();
             if (key_s.endsWith(":")) {
-                this.storage[memAddr_n++] = CON_TIN_UE0;
-                this.storage[memAddr_n++] = 0n;
+                // this.storage[memAddr_n++] = CON_TIN_UE0;
+                //this.storage[memAddr_n++] = 0n;
                 continue;
             }
             let key_i = this.translateMinimashineAsmKey(key_s, index_n);

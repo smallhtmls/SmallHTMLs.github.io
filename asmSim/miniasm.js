@@ -8,49 +8,49 @@ DIVI 9
 ADD 1
 XORI 4`;
 
-const STOP_SYMBOL = 0x00n;
-const MOV_VAL_ACC = 0xb8n;
-const MOV_MEM_ACC = 0xa1n;
-const MOV_ACC_MEM = 0xa3n;
-const ADD_ACC_MEM = 0x0306n;
-const SUB_ACC_MEM = 0x2b06n;
-const MUL_ACC_MEM = 0xf726n;
-const DIV_ACC_MEM = 0xf736n;
+const STOP_SYMBOL = 0x00n; // NOT INTELx86
+const MOV_VAL_ACC = 0xb8n; // INTELx86 mov ax, <number>
+const MOV_MEM_ACC = 0xa1n; // INTELx86 mov ax, [<addr>]
+const MOV_ACC_MEM = 0xa3n; // INTELx86 mov [<addr>], ax
+const ADD_ACC_MEM = 0x0306n; // INTELx86 add ax, [<addr>]
+const SUB_ACC_MEM = 0x2b06n; // INTELx86 sub ax, [<addr>]
+const MUL_ACC_MEM = 0xf726n; // INTELx86 mul word [<addr>]
+const DIV_ACC_MEM = 0xf736n; // INTELx86 div word [<addr>]
 const MOD_ACC_MEM = 0xff01n;
 
-const ADD_ACC_VAL = 0xffd1n;
-const SUB_ACC_VAL = 0xffd2n;
-const MUL_ACC_VAL = 0xffd3n;
-const DIV_ACC_VAL = 0xffd4n;
-const MOD_ACC_VAL = 0xffd5n;
-const DIU_ACC_VAL = 0xffe0n;
-const MOU_ACC_VAL = 0xffe1n;
-const MUH_ACC_VAL = 0xffe2n;
+const ADD_ACC_VAL = 0x83c0n; // INTELx86 add ax, <number>
+const SUB_ACC_VAL = 0x83e8n; // INTELx86 sub ax, <number>
+const MUL_ACC_VAL = 0x6bc0n; // INTELx86 imul ax, <number>
+const DIV_ACC_VAL = 0xffd4n; // NOT INTELx86
+const MOD_ACC_VAL = 0xffd5n; // NOT INTELx86
+const DIU_ACC_VAL = 0xffe0n; // NOT INTELx86
+const MOU_ACC_VAL = 0xffe1n; // NOT INTELx86
+const MUH_ACC_VAL = 0xffe2n; //
 const MHU_ACC_VAL = 0xffe3n;
-const CMP_ACC_VAL = 0xffe4n;
+const CMP_ACC_VAL = 0x83f8n; // INTELx86 cmp ax, <number>
 
-const AND_ACC_VAL = 0xffc2n;
-const AOR_ACC_VAL = 0xffc3n;
-const XOR_ACC_VAL = 0xffc4n;
-const SHL_ACC_VAL = 0xffc6n;
-const SHR_ACC_VAL = 0xffc7n;
-const SRA_ACC_VAL = 0xffc8n;
+const AND_ACC_VAL = 0x83e0n; // INTELx86 add ax, <number>
+const AOR_ACC_VAL = 0x83c8n; // INTELx86 or ax, <number>
+const XOR_ACC_VAL = 0x83f0n; // INTELx86 xor ax, <number>
+const SHL_ACC_VAL = 0xc1e0n; // INTELx86 shl ax, <number>
+const SHR_ACC_VAL = 0xc1e8n; // INTELx86 shr ax, <number>
+const SRA_ACC_VAL = 0xc1f8n; // INTELx86 sar ax, <number>
 
-const AND_ACC_MEM = 0xffe5n;
-const AOR_ACC_MEM = 0xffe6n;
-const XOR_ACC_MEM = 0xffe7n;
-const NOT_ACC_ACC = 0xffe8n;
-const SHL_ACC_MEM = 0xffe9n;
-const SHR_ACC_MEM = 0xffc0n;
-const SRA_ACC_MEM = 0xffc1n;
+const AND_ACC_MEM = 0x2606n; // INTELx86 and ax, [8]
+const AOR_ACC_MEM = 0x0b06n; // INTELx86 or ax, [8]
+const XOR_ACC_MEM = 0x3306n; // INTELx86 xor ax, [8]
+const NOT_ACC_ACC = 0xf7d0n; // INTELx86 not ax
+const SHL_ACC_MEM = 0xffe9n; // NOT INTELx86
+const SHR_ACC_MEM = 0xffc0n; // NOT INTELx86
+const SRA_ACC_MEM = 0xffc1n; // NOT INTELx86
 
-const DIU_ACC_MEM = 0xffd6n;
-const MOU_ACC_MEM = 0xffd7n;
-const MUH_ACC_MEM = 0xffd8n;
-const MHU_ACC_MEM = 0xffd9n;
+const DIU_ACC_MEM = 0xffd6n; // NOT INTELx86
+const MOU_ACC_MEM = 0xffd7n; // NOT INTELx86
+const MUH_ACC_MEM = 0xffd8n; // NOT INTELx86
+const MHU_ACC_MEM = 0xffd9n; // NOT INTELx86
 
-const CMP_ACC_MEM = 0xfff2n;
-const JMP_MEM_NUL = 0xfff3n;
+const CMP_ACC_MEM = 0x3b06n; // INTELx86 cmp
+const JMP_MEM_NUL = 0xff26n; // INTELx86 ax,
 const JLT_MEM_NUL = 0xfff4n;
 const JGT_MEM_NUL = 0xfff5n;
 const JLE_MEM_NUL = 0xfff6n;
