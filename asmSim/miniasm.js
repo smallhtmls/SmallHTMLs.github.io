@@ -63,11 +63,13 @@ const CON_TIN_UE0 = 0x0001n;
 const MOV_CRY_ACC = 0x0002n;
 
 const CODE_DESCRIPTION_S = {
+    [DIV_ACC_MEM]: "Fix?", // DONE
+    [DIV_ACC_VAL]: "Fix?", // DONE
     [MOV_CRY_ACC]: "Not yet tested!",
-    [DIU_ACC_VAL]: "Not yet fixed!", // DONE
-    [MOU_ACC_VAL]: "Not yet fixed!", // DONE
-    [MUH_ACC_VAL]: "Not yet fixed!", // DONE
-    [MHU_ACC_VAL]: "Not yet fixed!", // DONE
+    [DIU_ACC_VAL]: "", // DONE
+    [MOU_ACC_VAL]: "", // DONE
+    [MUH_ACC_VAL]: "", // DONE
+    [MHU_ACC_VAL]: "", // DONE
     [DIU_ACC_MEM]: "Not yet fixed!", // DONE
     [MOU_ACC_MEM]: "Not yet fixed!", // DONE
     [MUH_ACC_MEM]: "Not yet fixed!", // DONE

@@ -1,8 +1,9 @@
 let editor;
+const LANG = "minimaschine.asm";
 require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
 require(["vs/editor/editor.main"], function () {
-    monaco.languages.register({ id: "minimashine.asm" });
-    monaco.languages.setMonarchTokensProvider("minimashine.asm", {
+    monaco.languages.register({ id: LANG });
+    monaco.languages.setMonarchTokensProvider(LANG, {
         // Default token type
         defaultToken: "invalid",
 
@@ -25,7 +26,7 @@ require(["vs/editor/editor.main"], function () {
             documentation: "",
         });
     }
-    monaco.languages.registerCompletionItemProvider("minimashine.asm", {
+    monaco.languages.registerCompletionItemProvider(LANG, {
         provideCompletionItems: () => ({
             suggestions: completes,
         }),
@@ -33,7 +34,7 @@ require(["vs/editor/editor.main"], function () {
     editor = monaco.editor.create(document.getElementById("editor"), {
         value: DEFAULT_MINIASM,
         theme: "vs-light",
-        language: "minimashine.asm",
+        language: LANG,
         fontSize: 14,
         automaticLayout: true,
     });
