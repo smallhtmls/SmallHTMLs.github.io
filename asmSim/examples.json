@@ -1,0 +1,10 @@
+{
+    "examples": {
+        "mini@asm": {
+            "if-condition": {
+                "label": "if(a == 2) a += 2",
+                "code": ""
+            }
+        }
+    }
+}
