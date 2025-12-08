@@ -8,15 +8,18 @@
         <link href="index.css" rel="stylesheet" />
     </head>
     <body>
+        <div id="menuBar">
+            <div class="menuBarItem"></div>
+            <!--<button class="menuBarItem" id="menuHome">Home</button>
+            <button class="menuBarItem" id="menuUrlOptions">URL-Option</button>-->
+        </div>
         <div id="header">
             <a class="headerItem" id="backButton" href="https://smallhtmls.github.io">🠜</a>
-            <!--   <select onchange="updateMem();" id="bitModeSelector">
-                <option value="8">8bit</option>
-                <option value="16" selected>16bit</option>
-                <option value="32">32bit</option>
-                <option value="64">64bit</option>
-            </select>-->
-
+            <div id="settingsA">
+                <label for="stackPointerCheckbox">Stack-Pointer:</label><sasm-checkbox id="stackPointerCheckbox"></sasm-checkbox
+                ><label for="basePointerCheckbox">Base-Pointer:</label><sasm-checkbox id="basePointerCheckbox"></sasm-checkbox> <label for="bxRegisterCheckbox">BX Register:</label
+                ><sasm-checkbox id="bxRegisterCheckbox"></sasm-checkbox>
+            </div>
             <div class="headerItem" id="darkmodeContainer">Darkmode: <sasm-checkbox id="darkmodeToggle"></sasm-checkbox></div>
             <div id="version">Version: <span style="color: red">Beta</span> 0.0.1</div>
         </div>
@@ -30,7 +33,7 @@
                             <path d="M 0 0 L 10 5 L 0 10 z" />
                         </marker>
                     </defs>
-                    <g id="accumulator" transform="translate(125 185)">
+                    <g id="accumulator" transform="translate(170 160)">
                         <text class="svgText" id="accumulatorTitle" x="3" y="15">Akkumulator</text>
                         <text class="svgText" id="accumulatorText" x="8" y="47">0</text>
                         <rect x="0" y="30" width="200" height="30" fill="rgba(0,128,255,0.5)"></rect>
@@ -54,17 +57,21 @@
                         <rect x="0" y="0" width="300" height="130" stroke="blue" class="stdRect" />
                         <rect x="5" y="5" width="50" height="50" stroke="green" class="stdRect" />
                         <text x="10" y="52" class="controlButtonSymbol svgText" onclick="Processor.run();">⥁</text>
+                        <text x="10" y="65" class="controlButtonSymbol svgText hint" onclick="Processor.run();">Strg+2</text>
                         <rect x="70" y="5" width="50" height="50" stroke="green" class="stdRect" />
                         <text x="75" y="50" class="controlButtonSymbol svgText" onclick="Processor.step();">⟳</text>
+                        <text x="75" y="65" class="controlButtonSymbol svgText hint" onclick="Processor.step();">Strg+3</text>
                         <rect x="135" y="5" width="50" height="50" stroke="green" class="stdRect"></rect>
                         <text x="150" y="50" class="controlButtonSymbol svgText" onclick="Processor.smallStep();">⤸</text>
+                        <text x="150" y="65" class="controlButtonSymbol svgText hint" onclick="Processor.smallStep();">Strg+4</text>
                         <rect x="200" y="5" width="50" height="50" stroke="green" class="stdRect" onclick="Processor.stop();"></rect>
+                        <text x="212" y="65" class="controlButtonSymbol svgText hint" onclick="Processor.step();">Strg+X</text>
                         <text x="212" y="45" class="controlButtonSymbol svgText" onclick="Processor.stop();">⏹</text>
-                        <text class="svgText" x="10" y="72">Befehl:</text>
-                        <rect x="10" y="80" width="75" height="30" class="stdRect blackRect"></rect>
-                        <rect x="85" y="80" width="200" height="30" class="stdRect blackRect"></rect>
-                        <text class="svgtext" id="instructionId" x="12" y="100"></text>
-                        <text class="svgtext" id="instructionData" x="90" y="100"></text>
+                        <text class="svgText" x="10" y="83">Befehl:</text>
+                        <rect x="10" y="90" width="75" height="30" class="stdRect blackRect"></rect>
+                        <rect x="85" y="90" width="200" height="30" class="stdRect blackRect"></rect>
+                        <text class="svgtext" id="instructionId" x="12" y="110"></text>
+                        <text class="svgtext" id="instructionData" x="90" y="110"></text>
                     </g>
                     <!---->
 
@@ -81,6 +88,19 @@
                     <text class="svgText" x="20" y="50">Zähler:</text>
                     <rect x="15" y="60" width="130" height="30" fill="transparent" stroke="red"></rect>
                     <text class="svgText" x="20" y="80" id="programCounter">0</text>
+
+                    <text class="svgText stackp" x="20" y="160">Stack-Pointer:</text>
+                    <rect class="stackp" x="15" y="170" width="150" height="30" fill="transparent" stroke="yellow"></rect>
+                    <text class="svgText stackp" x="20" y="190" id="stackPointer">0</text>
+
+                    <text class="svgText stackbasep" x="20" y="220">Stack-Base-Pointer:</text>
+                    <rect x="15" y="230" class="stackbasep" width="150" height="30" fill="transparent" stroke="yellow"></rect>
+                    <text class="svgText stackbasep" x="20" y="250" id="stackBasePointer">0</text>
+
+                    <text class="svgText bxRegister" x="20" y="277">BX-Register:</text>
+                    <rect x="15" y="285" class="bxRegister" width="150" height="30" fill="transparent" stroke="yellow"></rect>
+                    <text class="svgText bxRegister" x="20" y="305" id="bxRegisterText">0</text>
+
                     <path d="M 120 100 l 0 20 l 20 0" marker-start="url(#arrow)" marker-end="url(#arrow)" stroke="cyan" stroke-width="3px" fill="transparent" />
                     <text class="svgText" x="480" y="305">
                         <tspan x="480" dy="15px" class="dataBusNumber"></tspan>
@@ -91,13 +111,13 @@
                     <path d="M 470 355 l -30 0 l 0 -130 l -30 0 l 0 20" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
                     <path d="M 470 355 l -30 0 l 0 -190" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
                     <!--AX - DATA BUS-->
-                    <path d="M 470 355 l -30 0 l 0 30 l -190 0 l 0 -130" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
-                    <path d="M 470 355 l -30 0 l 0 30 l -165 0 l 0 -130" stroke="blue" fill="transparent" stroke-width="3px" />
-                    <path d="M 275 253 l 0 1" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path d="M 470 355 l -30 0 l -190 0 l 0 -125" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path d="M 470 355 l -30 0 l -165 0 l 0 -125" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path d="M 275 230 l 0 1" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
                     <!--ALU-AX-->
-                    <path d="M 380 320 l 0 30 l -80 0 l 0 -95" marker-end="url(#arrow)" stroke="gold" fill="transparent" stroke-width="3px" />
+                    <path d="M 380 320 l 0 25 l -70 0 l 0 -115" marker-end="url(#arrow)" stroke="gold" fill="transparent" stroke-width="3px" />
                     <path d="M 390 320 l 0 95" marker-end="url(#arrow)" stroke="gold" fill="transparent" stroke-width="3px" />
-                    <path d="M 325 230 l 35 0 l 0 15" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path d="M 360 220 l 0 25" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
                     <!--Status Register-->
                     <rect class="blackRect" x="280" y="420" width="170" height="30" fill="transparent" stroke="black" />
                     <text class="svgText" x="300" y="437" id="statusRegister">Z:0 N:0 V:0 C:0</text>
@@ -109,12 +129,17 @@
             </div>
             <div id="code">
                 <select class="button" id="assembleSelect">
-                    <option value="mini@asm" id="">mini@asm</option></select
+                    <option value="mini@asm" id="">mini@asm</option>
+                    <!--  <option value="java">java</option>--></select
                 ><input id="openFile" type="file" /><button class="button" id="saveFile">Speichern</button>
+                Example:
+                <select id="loadExample" class="button"></select>
                 <div class="fscButton" id="codeFSC">⛶</div>
-                <button id="assembleButton" class="button" onclick="assemble();">Assemblieren</button>
-
-                <div id="editor" style="height: 90%; width: 100%; border: 1px solid #ccc"></div>
+                <button id="assembleButton" class="button"></button>
+                <div id="outerEditor">
+                    <div id="editor"></div>
+                    <div class="asmPreview"></div>
+                </div>
             </div>
             <div id="documentationOuter">
                 <div class="fscButton" id="documentationFSC">⛶</div>
@@ -125,6 +150,9 @@
                         <a href="https://schule.awiedemann.de/minimaschine.html">here</a>
                     </p>
                     <h2>Support</h2>
+                    <span style="color: red"
+                        >Defintions: acc = Accumulator | [mem] = Value of a memory cell | op1 = Data provided with the instruction (operator 1) | sp = Stack Pointer</span
+                    >
                     <p>This project currently only supports the Minimaschine Assembler Instructions (here: mini@asm)</p>
                     <h2>Instructions</h2>
                     <table id="strucTable">
@@ -142,10 +170,6 @@
                 </div>
             </div>
         </main>
-        <script src="./miniasm.js"></script>
-        <script src="./editor.js"></script>
-        <script src="./elements.js"></script>
-        <script src="./display.js"></script>
-        <script src="./CPU.js"></script>
+        <script src="./CPU.js" type="module"></script>
     </body>
 </html>

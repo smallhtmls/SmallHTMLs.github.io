@@ -1,16 +1,33 @@
-const CONFIG = {
-    MEMORY_SIZE: 50000n,
-};
+import {
+    setAccuDisplay,
+    setInstructionDisplay,
+    setInstructionData,
+    blinkAssemble,
+    initDisplay,
+    updateStatusRegister,
+    setStackPointer,
+    setBasePointer,
+    setBXRegister,
+} from "./display.js";
+import { ASSEMBLE_BUTTON_E, ASSEMBLE_SELECT_E, PROG_COUNTER_E, SAVE_FILE_BUTTON_E } from "./elements.js";
+import { initEditor, editor } from "./editor.js";
+import { compileJava } from "./java.js";
+import { MINIMASHINE_ASM_DECODE_TABLE_S, OPCODE, REGISTER } from "./miniasm.js";
 
-const BIT_MODE_8 = 2n ** 8n - 1n;
-const BIT_MODE_16 = 2n ** 16n - 1n;
-const BIT_MODE_32 = 2n ** 32n - 1n;
-const BIT_MODE_64 = 2n ** 64n - 1n;
+import { RAM } from "./RAM.js";
+import { BIT_MODE } from "./const.js";
+import { printBin } from "./util.js";
 
-const STATE_READ = 0x1;
-const STATE_WRITE = 0x0;
+const INT16_MIN = -0x8000n; // -32768
+const INT16_MAX = 0x7fffn; //  32767
 
+/**
+ * Set if the cmp has equal values
+ */
 const FLAG_ZERO = 0x0;
+/**
+ * Set if the cmp has acc greater than the value
+ */
 const FLAG_NEGATIVE = 0x1;
 const FLAG_OVERFLOW = 0x2;
 const FLAG_CARRIER = 0x3;
@@ -29,235 +46,305 @@ function decode(key_i) {
     return MINIMASHINE_ASM_DECODE_TABLE_S[key_i];
 }
 const toSigned = x => (x & 0x8000n ? x - 0x10000n : x);
+const toUnsigned = x => (x < 0n ? x + 0x10000n : x);
+
 /**
  * The CPU
  */
 class CPU {
+    #getRegisterByRMFactor(isMemory, register) {
+        if (isMemory)
+            return {
+                get: () => this.ram.read(Number(this.instructionData_i)),
+                set: s => this.ram.write(Number(this.instructionData_i)),
+            };
+        switch (register) {
+            case REGISTER.AX:
+                return this.axAccess;
+        }
+        return {
+            get: () => {
+                throw "Not a register!";
+            },
+            set: s => {
+                throw "Not a register!";
+            },
+        };
+    }
     execute() {
         let iq = v => this.currentInstruction_i == v;
         let calcDat_i;
+
         switch (this.currentInstruction_i) {
             // MATH
-            case ADD_ACC_MEM:
+            case OPCODE.ADD_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 this.setAccu(calcDat_i + this.accumulator_i);
                 break;
-            case SUB_ACC_MEM:
+            case OPCODE.SUB_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 this.setAccu(this.accumulator_i - calcDat_i);
                 break;
-            case MUL_ACC_MEM:
+            case OPCODE.MUL_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 calcDat_i = toSigned(calcDat_i);
                 this.accumulator_i = toSigned(this.accumulator_i);
-                this.setAccu(this.accumulator_i * calcDat_i);
+                this.setAccu(toUnsigned(this.accumulator_i * calcDat_i));
                 break;
-            case DIV_ACC_MEM:
+            case OPCODE.DIV_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 calcDat_i = toSigned(calcDat_i);
                 this.accumulator_i = toSigned(this.accumulator_i);
-                this.setAccu(this.accumulator_i / calcDat_i);
+                this.setAccu(toUnsigned(this.accumulator_i / calcDat_i));
                 break;
-            case MOD_ACC_MEM:
+            case OPCODE.MOD_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 calcDat_i = toSigned(calcDat_i);
                 this.accumulator_i = toSigned(this.accumulator_i);
-                this.setAccu(this.accumulator_i % calcDat_i);
+                this.setAccu(toUnsigned(this.accumulator_i % calcDat_i));
                 break;
             //
-            case ADD_ACC_VAL:
+            case OPCODE.ADD_ACC_VAL:
                 this.setAccu(this.accumulator_i + this.instructionData_i);
                 break;
-            case SUB_ACC_VAL:
+            case OPCODE.SUB_ACC_VAL:
                 this.setAccu(this.accumulator_i - this.instructionData_i);
                 break;
-            case MUL_ACC_VAL:
+            case OPCODE.MUL_ACC_VAL:
                 calcDat_i = toSigned(this.instructionData_i);
                 this.accumulator_i = toSigned(this.accumulator_i);
-                this.setAccu(this.accumulator_i * calcDat_i);
+                this.setAccu(toUnsigned(this.accumulator_i * calcDat_i));
                 break;
-            case DIV_ACC_VAL:
+            case OPCODE.DIV_ACC_VAL:
                 calcDat_i = toSigned(this.instructionData_i);
                 this.accumulator_i = toSigned(this.accumulator_i);
-                console.log(this.accumulator_i, calcDat_i, this.accumulator_i / calcDat_i);
-                this.setAccu(this.accumulator_i / calcDat_i);
+                this.setAccu(toUnsigned(this.accumulator_i / calcDat_i));
                 break;
-            case MOD_ACC_VAL:
+            case OPCODE.MOD_ACC_VAL:
                 calcDat_i = toSigned(this.instructionData_i);
                 this.accumulator_i = toSigned(this.accumulator_i);
-                this.setAccu(this.accumulator_i % calcDat_i);
-                break;
-            case SUB_ACC_MEM:
-                calcDat_i = this.ram.read(Number(this.instructionData_i));
-                this.setAccu(((this.accumulator_i & 0xffffn) - (calcDat_i & 0xffffn)) & 0xffffn);
+                this.setAccu(toUnsigned(this.accumulator_i % calcDat_i));
                 break;
             // END OF SIMPLE MATH
-            case MUH_ACC_MEM:
-                calcDat_i = this.ram.read(Number(this.instructionData_i));
-                if (calcDat_i & FILTER_15th_BIT) calcDat_i |= UNSIGNED_MANIPULATION;
-                if (this.accumulator_i & FILTER_15th_BIT) this.accumulator_i |= UNSIGNED_MANIPULATION;
-                calcDat_i *= this.accumulator_i;
-                this.setAccu((calcDat_i >> 16n) & BIT_MODE_16, false);
-                break;
-            case MUH_ACC_VAL:
-                calcDat_i = this.instructionData_i;
-                if (calcDat_i & FILTER_15th_BIT) calcDat_i |= UNSIGNED_MANIPULATION;
-                if (this.accumulator_i & FILTER_15th_BIT) this.accumulator_i |= UNSIGNED_MANIPULATION;
-                calcDat_i *= this.accumulator_i;
-                this.setAccu((calcDat_i >> 16n) & BIT_MODE_16, false);
-                break;
-            case MHU_ACC_MEM:
-                calcDat_i = this.ram.read(Number(this.instructionData_i));
-                this.accumulator_i &= ~UNSIGNED_MANIPULATION;
-                calcDat_i &= ~UNSIGNED_MANIPULATION;
-                calcDat_i *= this.accumulator_i;
-                this.setAccu((calcDat_i >> 16n) & BIT_MODE_16, true);
-                break;
-            case MHU_ACC_VAL:
-                calcDat_i = this.instructionData_i;
-                this.accumulator_i &= ~UNSIGNED_MANIPULATION;
-                calcDat_i &= ~UNSIGNED_MANIPULATION;
-                calcDat_i *= this.accumulator_i;
-                this.setAccu((calcDat_i >> 16n) & BIT_MODE_16, true);
-                break;
-            case DIU_ACC_MEM:
+            case OPCODE.MUH_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 calcDat_i = toSigned(calcDat_i);
                 this.accumulator_i = toSigned(this.accumulator_i);
+                calcDat_i *= this.accumulator_i;
+                calcDat_i = toUnsigned(calcDat_i);
+                this.setAccu(calcDat_i >> 16n, false);
+                break;
+            case OPCODE.MUH_ACC_VAL:
+                calcDat_i = this.instructionData_i;
+                calcDat_i = toSigned(calcDat_i);
+                this.accumulator_i = toSigned(this.accumulator_i);
+                calcDat_i *= this.accumulator_i;
+                calcDat_i = toUnsigned(calcDat_i);
+                this.setAccu(calcDat_i >> 16n, false);
+                break;
+            case OPCODE.MHU_ACC_MEM:
+                calcDat_i = this.ram.read(Number(this.instructionData_i));
+                calcDat_i *= this.accumulator_i;
+                this.setAccu(calcDat_i >> 16n, true);
+                break;
+            case OPCODE.MHU_ACC_VAL:
+                calcDat_i = this.instructionData_i;
+                calcDat_i *= this.accumulator_i;
+                this.setAccu(calcDat_i >> 16n, true);
+                break;
+            case OPCODE.DIU_ACC_MEM:
+                calcDat_i = this.ram.read(Number(this.instructionData_i));
                 this.setAccu(this.accumulator_i / calcDat_i, true);
                 break;
-            case DIU_ACC_VAL:
+            case OPCODE.DIU_ACC_VAL:
                 calcDat_i = this.instructionData_i;
-                calcDat_i = toSigned(calcDat_i);
-                this.accumulator_i = toSigned(this.accumulator_i);
                 this.setAccu(this.accumulator_i / calcDat_i, true);
                 break;
-            case MOU_ACC_MEM:
+            case OPCODE.MOU_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
-                calcDat_i = toSigned(calcDat_i);
-                this.accumulator_i = toSigned(this.accumulator_i);
                 this.setAccu(this.accumulator_i % calcDat_i, true);
                 break;
-            case MOU_ACC_VAL:
+            case OPCODE.MOU_ACC_VAL:
                 calcDat_i = this.instructionData_i;
-                calcDat_i = toSigned(calcDat_i);
-                this.accumulator_i = toSigned(this.accumulator_i);
                 this.setAccu(this.accumulator_i % calcDat_i, true);
                 break;
             // BOOL OPERATION
-            case NOT_ACC_ACC:
+            case OPCODE.NOT_ACC_ACC:
                 this.setAccu(~this.accumulator_i);
                 break;
-            case AND_ACC_MEM:
+            case OPCODE.AND_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 this.setAccu(this.accumulator_i & calcDat_i);
                 break;
-            case AND_ACC_VAL:
+            case OPCODE.AND_ACC_VAL:
                 this.setAccu(this.accumulator_i & this.instructionData_i);
                 break;
-            case AOR_ACC_MEM:
+            case OPCODE.AOR_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 this.setAccu(this.accumulator_i | calcDat_i);
                 break;
-            case AOR_ACC_VAL:
+            case OPCODE.AOR_ACC_VAL:
                 this.setAccu(this.accumulator_i | this.instructionData_i);
                 break;
-            case XOR_ACC_MEM:
+            case OPCODE.XOR_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 this.setAccu(this.accumulator_i ^ calcDat_i);
                 break;
-            case XOR_ACC_VAL:
+            case OPCODE.XOR_ACC_VAL:
                 this.setAccu(this.accumulator_i ^ this.instructionData_i);
                 break;
-            case SHL_ACC_MEM:
+            case OPCODE.SHL_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
-                this.setAccu(this.accumulator_i << calcDat_i);
+                calcDat_i = toSigned(calcDat_i);
+                this.accumulator_i = toSigned(this.accumulator_i);
+                this.setAccu(toUnsigned(this.accumulator_i << calcDat_i));
                 break;
-            case SHL_ACC_VAL:
-                this.setAccu(this.accumulator_i << this.instructionData_i);
+            case OPCODE.SHL_ACC_VAL:
+                calcDat_i = this.instructionData_i;
+                calcDat_i = toSigned(calcDat_i);
+                this.accumulator_i = toSigned(this.accumulator_i);
+                this.setAccu(toUnsigned(this.accumulator_i << calcDat_i));
                 break;
-            case SHR_ACC_MEM:
+            case OPCODE.SRA_ACC_MEM:
+                calcDat_i = this.ram.read(Number(this.instructionData_i));
+                calcDat_i = toSigned(calcDat_i);
+                this.accumulator_i = toSigned(this.accumulator_i);
+                this.setAccu(toUnsigned(this.accumulator_i >> calcDat_i));
+                break;
+            case OPCODE.SRA_ACC_VAL:
+                calcDat_i = this.instructionData_i;
+                calcDat_i = toSigned(calcDat_i);
+                this.accumulator_i = toSigned(this.accumulator_i);
+                this.setAccu(toUnsigned(this.accumulator_i >> calcDat_i));
+                break;
+            case OPCODE.SHR_ACC_MEM:
                 calcDat_i = this.ram.read(Number(this.instructionData_i));
                 this.setAccu(this.accumulator_i >> calcDat_i);
                 break;
-            case SHR_ACC_VAL:
-                this.setAccu(this.accumulator_i >> this.instructionData_i);
-                break;
-            case SRA_ACC_MEM:
-                calcDat_i = this.ram.read(Number(this.instructionData_i));
-                if (calcDat_i & FILTER_15th_BIT) {
-                    this.accumulator_i |= ~0xffff;
-                }
-                this.setAccu(this.accumulator_i >> calcDat_i);
-                break;
-            case SRA_ACC_VAL:
-                if (calcDat_i & FILTER_15th_BIT) {
-                    this.accumulator_i |= ~0xffff;
-                }
+            case OPCODE.SHR_ACC_VAL:
                 this.setAccu(this.accumulator_i >> this.instructionData_i);
                 break;
             // MEMORY
-            case MOV_MEM_ACC:
+            case OPCODE.MOV_MEM_ACC:
                 this.setAccu(this.ram.read(Number(this.instructionData_i)));
                 break;
             //
-            case MOV_VAL_ACC:
+            case OPCODE.MOV_VAL_ACC:
                 this.setAccu(this.instructionData_i);
                 break;
-            case MOV_ACC_MEM:
+            case OPCODE.MOV_ACC_MEM:
                 this.ram.write(Number(this.instructionData_i), this.accumulator_i);
                 break;
-            case MOV_CRY_ACC:
+            case OPCODE.MOV_CRY_ACC:
                 this.setAccu(this.statusRegister[FLAG_CARRIER] ? 1n : 0n);
                 break;
+            case OPCODE.MOV_MEM_BX:
+                this.bxAccess.set(this.ram.read(Number(this.instructionData_i)));
+                break;
+            //
+            case OPCODE.MOV_VAL_BX:
+                this.bxAccess.set(this.instructionData_i);
+                break;
+            case OPCODE.MOV_BX_MEM:
+                this.ram.write(Number(this.instructionData_i), this.bxAccess.get());
+                break;
             // CONTROL
-            case STOP_SYMBOL:
+            case OPCODE.STOP_SYMBOL:
                 setInstructionData(0n);
                 this.instructionData_i = 0n;
                 this.step_n = 0;
                 this.prgCounter_n = 0;
                 PROG_COUNTER_E.innerHTML = Math.floor(this.prgCounter_n);
                 break;
-            case CON_TIN_UE0:
+            case OPCODE.CON_TIN_UE0:
                 break;
-            case CMP_ACC_MEM:
+            case OPCODE.CMP_ACC_MEM:
                 calcDat_i = this.accumulator_i;
                 calcDat_i -= this.ram.read(Number(this.instructionData_i));
                 this.setStatusRegister(FLAG_ZERO, calcDat_i == 0);
                 this.setStatusRegister(FLAG_NEGATIVE, calcDat_i < 0);
                 break;
-            case CMP_ACC_VAL:
+            case OPCODE.CMP_ACC_VAL:
                 calcDat_i = this.accumulator_i;
                 calcDat_i -= this.instructionData_i;
                 this.setStatusRegister(FLAG_ZERO, calcDat_i == 0);
                 this.setStatusRegister(FLAG_NEGATIVE, calcDat_i < 0);
                 break;
-            case JLT_MEM_NUL:
+            case OPCODE.JLT_MEM_NUL:
                 if (!this.statusRegister[FLAG_ZERO] && this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
                 break;
-            case JLE_MEM_NUL:
+            case OPCODE.JLE_MEM_NUL:
                 if (this.statusRegister[FLAG_ZERO] || this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
                 break;
-            case JGT_MEM_NUL:
+            case OPCODE.JGT_MEM_NUL:
                 if (!this.statusRegister[FLAG_ZERO] && !this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
                 break;
-            case JGE_MEM_NUL:
+            case OPCODE.JGE_MEM_NUL:
                 if (this.statusRegister[FLAG_ZERO] || !this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
                 break;
-            case JNE_MEM_NUL:
+            case OPCODE.JNE_MEM_NUL:
+                if (!this.statusRegister[FLAG_ZERO]) this.setProgramCounter(Number(this.instructionData_i));
+                break;
+            case OPCODE.JEQ_MEM_NUL:
                 if (this.statusRegister[FLAG_ZERO]) this.setProgramCounter(Number(this.instructionData_i));
                 break;
-            case JEQ_MEM_NUL:
-                if (this.statusRegister[FLAG_ZERO]) this.setProgramCounter(Number(this.instructionData_i));
-                break;
-            case JOV_MEM_NUL:
+            case OPCODE.JOV_MEM_NUL:
                 if (this.statusRegister[FLAG_OVERFLOW]) this.setProgramCounter(Number(this.instructionData_i));
                 break;
-            case JOC_MEM_NUL:
+            case OPCODE.JOC_MEM_NUL:
                 if (this.statusRegister[FLAG_CARRIER]) this.setProgramCounter(Number(this.instructionData_i));
                 break;
-            case JMP_MEM_NUL:
+            case OPCODE.JMP_MEM_NUL:
                 this.setProgramCounter(Number(this.instructionData_i));
+                break;
+            //
+            //
+            //
+            case OPCODE.POP_FRM_STA:
+                calcDat_i = this.spAccess.get() + 1n;
+                if (calcDat_i > this.ram.maxAddr()) {
+                    break;
+                }
+                this.setAccu(this.ram.read(Number(calcDat_i - 1n)));
+                this.spAccess.set(calcDat_i);
+                break;
+            case OPCODE.PUS_HTO_STA:
+                calcDat_i = this.spAccess.get() - 1n;
+                if (calcDat_i < 0n) {
+                    break;
+                }
+                this.ram.write(Number(calcDat_i), this.axAccess.get());
+                this.spAccess.set(calcDat_i);
+                break;
+            case OPCODE.CAL_LTO_STP:
+                calcDat_i = this.spAccess.get() - 1n;
+                if (calcDat_i < 0n) {
+                    break;
+                }
+                this.ram.write(Number(calcDat_i), BigInt(this.prgCounter_n));
+                this.setProgramCounter(Number(this.instructionData_i));
+                this.spAccess.set(calcDat_i);
+                break;
+            case OPCODE.RET_NTO_STP:
+                calcDat_i = this.spAccess.get() + 1n;
+                if (calcDat_i > this.ram.maxAddr()) {
+                    break;
+                }
+                this.setProgramCounter(Number(this.ram.read(Number(calcDat_i - 1n))));
+                this.spAccess.set(calcDat_i);
+                break;
+            case OPCODE.RES_ERV_ADR:
+                this.spAccess.set(this.spAccess.get() - this.instructionData_i);
+                break;
+            case OPCODE.REL_EAS_ADR:
+                this.spAccess.set(this.spAccess.get() + this.instructionData_i);
+                break;
+            // BX Register
+            case OPCODE.XCHG_ACC_BX:
+                let bx = this.bxAccess.get();
+                let ax = this.axAccess.get();
+                this.bxAccess.set(ax);
+                this.axAccess.set(bx);
                 break;
         }
     }
@@ -284,7 +371,40 @@ class CPU {
         this.step_n = 0;
         this.currentInstruction_i = 0n;
         this.instructionData_i = 0n;
+        this.basePointer = 0n;
+        this.stackPointer = 0n;
+        this.bxRegister_i = 0n;
         this.statusRegister = [false, false, false, false];
+        this.axAccess = {
+            get: () => this.accumulator_i,
+            set: s => this.setAccu(s),
+        };
+        this.bpAccess = {
+            get: () => this.basePointer,
+            set: s => {
+                this.basePointer = s & 0xffffn;
+                setBasePointer(this.basePointer);
+            },
+        };
+        this.spAccess = {
+            get: () => this.stackPointer,
+            set: s => {
+                this.stackPointer = s & 0xffffn;
+                setStackPointer(this.stackPointer);
+            },
+        };
+        this.bxAccess = {
+            get: () => this.bxRegister_i,
+            set: s_i => {
+                this.bxRegister_i = s_i;
+                setBXRegister(s_i);
+            },
+        };
+        this.axAccess.set(0n);
+        this.bxAccess.set(0n);
+        this.bpAccess.set(this.ram.maxAddr());
+        this.spAccess.set(this.ram.maxAddr());
+
         this.setStatusRegister(FLAG_ZERO, false);
     }
     setStatusRegister(flag_i, val_b) {
@@ -305,13 +425,16 @@ class CPU {
         this.prgCounter_n = 0;
         this.step_n = 0;
         this.intervalNumber = null;
+        this.axAccess.set(0n);
+        this.spAccess.set(this.ram.maxAddr());
+        this.bpAccess.set(this.ram.maxAddr());
         PROG_COUNTER_E.innerHTML = Math.floor(this.prgCounter_n);
     }
     run() {
         if (this.intervalNumber != null) return;
         this.intervalNumber = setInterval(() => {
             this.step();
-            if (this.currentInstruction_i == STOP_SYMBOL) {
+            if (this.currentInstruction_i === OPCODE.STOP_SYMBOL) {
                 clearInterval(this.intervalNumber);
                 this.intervalNumber = null;
             }
@@ -351,146 +474,56 @@ class CPU {
         this.step_n++;
     }
     setAccu(accu_i, isUnsigned = false) {
-        this.setStatusRegister(isUnsigned ? FLAG_CARRIER : FLAG_OVERFLOW, accu_i > 0xffffn / 2n || accu_i < -(0xffffn / 2n));
+        this.setStatusRegister(isUnsigned ? FLAG_CARRIER : FLAG_OVERFLOW, accu_i > BIT_MODE[16]);
         this.accumulator_i = accu_i & 0xffffn;
         setAccuDisplay(this.accumulator_i);
     }
 }
 
-function isIn(val_i, bitMode_i) {
-    return val_i >= -bitMode_i / 2n && val_i <= bitMode_i / 2n;
-}
-/**
- * The Ram storage
- */
-class RAM {
-    constructor() {
-        this.bitMode = 0n;
-        this.bitCount_i = 0n;
-        this.storage = Array.from({ length: Number(CONFIG.MEMORY_SIZE / 2n) }, m => 0n);
-    }
-    write(addr_n, data_i) {
-        setControlBus(STATE_WRITE);
-        setAddressBus(addr_n);
-        setDataBus(this.bitCount_i, data_i);
-        this.storage[addr_n] = data_i;
-        updateRamRender({ [addr_n]: data_i }, 1);
-    }
-    read(addr_n, bytesToRead_i = 2n) {
-        setControlBus(STATE_READ, bytesToRead_i);
-        setAddressBus(addr_n);
-        const data_i = this.storage[Math.floor(addr_n)];
-        setDataBus(bytesToRead_i * 8n, data_i);
-        return data_i;
-    }
-    setBitMode(bitMode) {
-        switch (bitMode) {
-            case BIT_MODE_8:
-                this.bitCount_i = 8n;
-                break;
-            case BIT_MODE_16:
-                this.bitCount_i = 16n;
-                break;
-            case BIT_MODE_32:
-                this.bitCount_i = 32n;
-                break;
-            case BIT_MODE_64:
-                this.bitCount_i = 64n;
-                break;
-            default:
-                return false;
-        }
-        setDataBus(this.bitCount_i, 0n);
-        this.byteCount_i = this.bitCount_i / 8n;
-        this.render();
-        this.bitMode = bitMode;
-    }
-    render() {
-        renderRamTable(
-            this.bitCount_i,
-            CONFIG.MEMORY_SIZE,
-            (addr, bytesTLoad) => {
-                return this.storage[addr];
-            },
-            (i, b) => {
-                this.storage[i] = b;
-                return { [i]: b };
-            }
-        );
-    }
-    translateMinimashineAsmKey(val_s, line_n) {
-        val_s = val_s.trim().toUpperCase();
-        for (const key in MINIMASHINE_ASM_DECODE_TABLE_S) {
-            if (MINIMASHINE_ASM_DECODE_TABLE_S[key] === val_s) return BigInt(key);
-        }
-        alert("Opcode not found for: " + val_s + " in line: " + line_n);
-        return 0n;
-    }
-    translateMinimashineAsmValue(val_s, line_n) {
-        if (val_s == undefined) return 0n;
-        const val = BigInt(val_s);
-        if (val == undefined && val == null) {
-            alert("Val not a number in line: " + line_n);
-            return 0n;
-        }
-        if (!isIn(val, this.bitMode)) {
-            alert("Val not in range 0.." + this.bitMode + " in line: " + line_n);
-            return 0n;
-        }
-        return val;
-    }
-    translateMinimashineAsm(text_s) {
-        let tag_address_m = {};
-        const line_as = text_s.split("\n");
-        let index_n = 0;
-        let memAddr_n = 0;
-        for (let line_s of line_as) {
-            line_s = line_s.trim();
-            if (line_s.endsWith(":")) {
-                const tag = line_s.slice(0, line_s.length - 1);
-                tag_address_m[tag] = BigInt(memAddr_n);
-                //memAddr_n += 2;
-                continue;
-            }
-            if (line_s == "" || line_s.startsWith(";")) continue;
-            memAddr_n += 2;
-        }
-        memAddr_n = 0;
-        for (let line_s of line_as) {
-            line_s = line_s.trim();
-            if (line_s == "" || line_s.startsWith(";")) continue;
-            const cols_as = line_s.split(" ");
-            const key_s = cols_as[0].trim();
-            let val_s = cols_as[1];
-            if (val_s) val_s = val_s.trim();
-            if (key_s.endsWith(":")) {
-                // this.storage[memAddr_n++] = CON_TIN_UE0;
-                //this.storage[memAddr_n++] = 0n;
-                continue;
-            }
-            let key_i = this.translateMinimashineAsmKey(key_s, index_n);
-            let val_i = 0n;
-            console.log(tag_address_m);
-            if (tag_address_m[val_s]) {
-                val_i = tag_address_m[val_s];
-            } else {
-                val_i = this.translateMinimashineAsmValue(val_s, index_n);
-            }
-            index_n++;
-            this.storage[memAddr_n++] = key_i;
-            this.storage[memAddr_n++] = val_i;
-        }
-        this.render();
-    }
-}
 const Memory = new RAM();
-const Processor = new CPU(Memory);
-Memory.setBitMode(BIT_MODE_16);
+const currentProcessor = new CPU(Memory);
+window.Processor = currentProcessor;
+Memory.setBitMode(BIT_MODE[16]);
 //updateMem();
 function assemble() {
     switch (ASSEMBLE_SELECT_E.value) {
         case "mini@asm":
             Memory.translateMinimashineAsm(editor.getValue().trim());
             break;
+        case "java":
+            let miniasm = compileJava(editor.getValue().trim());
+            Memory.translateMinimashineAsm("");
     }
 }
+ASSEMBLE_BUTTON_E.addEventListener("click", assemble);
+initEditor(blinkAssemble, initDisplay);
+
+document.addEventListener("keydown", e => {
+    if (!e.ctrlKey) return;
+    let preventDefault = true;
+    switch (e.key) {
+        case "1":
+            ASSEMBLE_BUTTON_E.click();
+            break;
+        case "2":
+            currentProcessor.run();
+            break;
+        case "3":
+            currentProcessor.step();
+            break;
+        case "4":
+            currentProcessor.smallStep();
+            break;
+        case "X":
+            currentProcessor.stop();
+            break;
+        case "s":
+            SAVE_FILE_BUTTON_E.click();
+            break;
+        default:
+            preventDefault = false;
+    }
+    if (preventDefault) {
+        e.preventDefault();
+    }
+});
