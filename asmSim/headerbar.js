@@ -1,0 +1,71 @@
+import { examples, loadEditorType } from "./display.js";
+import { ASSEMBLE_SELECT_E, CHECKBOX_BASEPOINTER, CHECKBOX_BX_REGISTER, CHECKBOX_STACKPOINTER, DARK_MODE_TOGGLE_E, MENU_URL_BUTTON_E } from "./elements.js";
+import { OPTIONS } from "./options.js";
+import { setClassVisible, setContextMenu, setStyle } from "./util.js";
+function updateStyle(darkMode) {
+    OPTIONS.setDarkMode(darkMode);
+    if (!darkMode) {
+        DARK_MODE_TOGGLE_E.setAttribute("checked", "false");
+        // LIGHT MODE
+        setStyle("black", "white", "vs-light");
+    } else {
+        // DARK MODE
+        DARK_MODE_TOGGLE_E.setAttribute("checked", "true");
+        setStyle("white", "#222225", "vs-dark");
+    }
+}
+
+DARK_MODE_TOGGLE_E.onclick = () => {
+    updateStyle(DARK_MODE_TOGGLE_E.getAttribute("checked") !== "true");
+};
+
+function updateSP(sp) {
+    OPTIONS.setSP(sp);
+    setClassVisible("stackp", OPTIONS.hasSP());
+    if (!sp) {
+        CHECKBOX_STACKPOINTER.setAttribute("checked", "false");
+    } else {
+        CHECKBOX_STACKPOINTER.setAttribute("checked", "true");
+    }
+}
+
+function updateBP(sp) {
+    OPTIONS.setBP(sp);
+
+    setClassVisible("stackbasep", OPTIONS.hasBP());
+    if (!sp) {
+        CHECKBOX_BASEPOINTER.setAttribute("checked", "false");
+    } else {
+        CHECKBOX_BASEPOINTER.setAttribute("checked", "true");
+    }
+}
+function updateBX(sp) {
+    OPTIONS.setBX(sp);
+    setClassVisible("bxRegister", OPTIONS.hasBX());
+    if (!sp) {
+        CHECKBOX_BX_REGISTER.setAttribute("checked", "false");
+    } else {
+        CHECKBOX_BX_REGISTER.setAttribute("checked", "true");
+    }
+}
+
+CHECKBOX_STACKPOINTER.onclick = () => {
+    updateSP(CHECKBOX_STACKPOINTER.getAttribute("checked") !== "true");
+};
+CHECKBOX_BASEPOINTER.onclick = () => {
+    updateBP(CHECKBOX_BASEPOINTER.getAttribute("checked") !== "true");
+};
+CHECKBOX_BX_REGISTER.onclick = () => {
+    updateBX(CHECKBOX_BX_REGISTER.getAttribute("checked") !== "true");
+};
+
+function closeContextMenu(e) {}
+
+export function postInitHeader() {
+    updateStyle(OPTIONS.getDarkMode());
+    updateSP(OPTIONS.hasSP());
+    updateBP(OPTIONS.hasBP());
+    updateBX(OPTIONS.hasBX());
+    ASSEMBLE_SELECT_E.value = OPTIONS.getLang();
+    loadEditorType(OPTIONS.getLang());
+}
