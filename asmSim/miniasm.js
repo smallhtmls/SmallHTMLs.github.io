@@ -74,6 +74,8 @@ export const OPCODE = {
     RES_ERV_ADR: 0x0007n,
     REL_EAS_ADR: 0x0008n,
     //
+    MOV_SP_MEM: buildOpcode(0x89n, 0b01_000_100n),
+    MOV_MEM_SP: buildOpcode(0x8bn, 0b01_000_100n),
     MOV_VAL_BX: 0xbb00n,
     MOV_MEM_BX: buildOpcode(0x8bn, 0b00_011_110n),
     MOV_BX_MEM: buildOpcode(0x89n, 0b00_011_110n),
@@ -114,46 +116,62 @@ export const CODE_DESCRIPTION_S = {
     [OPCODE.MOU_ACC_VAL]: "acc <(Remainder of unsigned divide)= acc / op1", // DONE
     [OPCODE.MUH_ACC_VAL]: "acc = (acc * op1) < Upper 16 bits of 32 bit", //DONE
     [OPCODE.MHU_ACC_VAL]: "acc = (acc unsigned* op1) < Upper 16 bits of 32 bit", // DONE
-    [OPCODE.CMP_ACC_VAL]: "Compares the acc with a value to store in flags (acc - op1)", // DONE
+    [OPCODE.CMP_ACC_VAL]:
+        "Compares the acc with a value to store in flags (acc - op1)", // DONE
     [OPCODE.DIU_ACC_MEM]: "acc = acc unsigned/ [mem]", // DONE
     [OPCODE.MOU_ACC_MEM]: "acc <(Remainder of unsigned divide)= acc / [mem]", // DONE
     [OPCODE.MUH_ACC_MEM]: "acc = (acc * [mem]) < Upper 16 bits of 32 bit", // DONE
-    [OPCODE.MHU_ACC_MEM]: "acc = (acc unsigned* [mem]) < Upper 16 bits of 32 bit", // DONE
+    [OPCODE.MHU_ACC_MEM]:
+        "acc = (acc unsigned* [mem]) < Upper 16 bits of 32 bit", // DONE
     [OPCODE.AND_ACC_VAL]: "and operation of bits with acc and op1", // DONE
     [OPCODE.AOR_ACC_VAL]: "or operation of bits with acc and op1", //DONE
     [OPCODE.XOR_ACC_VAL]: "Exclusive or operation of bits with acc and op1", // DONE
     [OPCODE.SHL_ACC_VAL]: "Shifts all bits of acc to the left by op1", // DONE
     [OPCODE.SHR_ACC_VAL]: "Shifts all bits of acc to the right by op1", // DONE
-    [OPCODE.SRA_ACC_VAL]: "Shifts all bits of acc to the right by op1 and keeps the sign", // DONE
+    [OPCODE.SRA_ACC_VAL]:
+        "Shifts all bits of acc to the right by op1 and keeps the sign", // DONE
     [OPCODE.AND_ACC_MEM]: "and operation of bits with acc and [mem]", // DONE
     [OPCODE.AOR_ACC_MEM]: "or operation of bits with acc and [mem]", //DONE
     [OPCODE.XOR_ACC_MEM]: "Exclusive or operation of bits with acc and [mem]", // DONE
     [OPCODE.SHL_ACC_MEM]: "Shifts all bits of acc to the left by [mem]", // DONE
     [OPCODE.SHR_ACC_MEM]: "Shifts all bits of acc to the right by [mem]", // DONE
-    [OPCODE.SRA_ACC_MEM]: "Shifts all bits of acc to the right by [mem] and keeps the sign ", // DONE
+    [OPCODE.SRA_ACC_MEM]:
+        "Shifts all bits of acc to the right by [mem] and keeps the sign ", // DONE
     [OPCODE.NOT_ACC_ACC]: "Inverts all bits in acc", // DONE
-    [OPCODE.CMP_ACC_MEM]: "Compares the acc with a value to store in flags (acc - [mem])", // DONE
+    [OPCODE.CMP_ACC_MEM]:
+        "Compares the acc with a value to store in flags (acc - [mem])", // DONE
     [OPCODE.JMP_MEM_NUL]: "Jumps to address", // DONE
-    [OPCODE.JLT_MEM_NUL]: "Jumps to address if less than (not zero and negative flag)", // DONE
-    [OPCODE.JGT_MEM_NUL]: "Jumps to address if greater than (not zero and not negative flag)", // DONE
-    [OPCODE.JLE_MEM_NUL]: "Jumps to address if less or equal (zero or negative flag)", // DONE
-    [OPCODE.JGE_MEM_NUL]: "Jumps to address if greater or equal (zero or not negative flag)", // DONE
+    [OPCODE.JLT_MEM_NUL]:
+        "Jumps to address if less than (not zero and negative flag)", // DONE
+    [OPCODE.JGT_MEM_NUL]:
+        "Jumps to address if greater than (not zero and not negative flag)", // DONE
+    [OPCODE.JLE_MEM_NUL]:
+        "Jumps to address if less or equal (zero or negative flag)", // DONE
+    [OPCODE.JGE_MEM_NUL]:
+        "Jumps to address if greater or equal (zero or not negative flag)", // DONE
     [OPCODE.JEQ_MEM_NUL]: "Jumps to address if equal (zero flag)", // DONE
     [OPCODE.JNE_MEM_NUL]: "Jumps to address if not equal (no zero flag)", // DONE
     [OPCODE.JOC_MEM_NUL]: "Jumps to address (op1) if carry flag is set", // DONE
     [OPCODE.JOV_MEM_NUL]: "Jumps to address (op1) if overflow flag is set", // DONE
     [OPCODE.CON_TIN_UE0]: "Ignore instruction! - NO OPeration", // DONE
     [OPCODE.STOP_SYMBOL]: "Stops the program, and clears the pc", // DONE
-    [OPCODE.CAL_LTO_STP]: "Stores the next pc on the stack and jumps to the address given",
+    [OPCODE.CAL_LTO_STP]:
+        "Stores the next pc on the stack and jumps to the address given",
     [OPCODE.RET_NTO_STP]: "Pops a address from the stack and set the pc to it.",
-    [OPCODE.PUS_HTO_STA]: "Pushes the value of the acc to the stack and sp -= 1",
+    [OPCODE.PUS_HTO_STA]:
+        "Pushes the value of the acc to the stack and sp -= 1",
     [OPCODE.POP_FRM_STA]: "Pop the value from the stack to the acc and sp += 1",
     [OPCODE.RES_ERV_ADR]: "Moves the sp up by the values (sp -= op1)",
     [OPCODE.REL_EAS_ADR]: "Moves the sp down by the value (sp += op1)",
     [OPCODE.MOV_VAL_BX]: "Loads a value to the bx register",
-    [OPCODE.MOV_BX_MEM]: "Stores the value of the bx register into a storage cell",
+    [OPCODE.MOV_BX_MEM]:
+        "Stores the value of the bx register into a storage cell",
     [OPCODE.MOV_MEM_BX]: "Loads the value of a storage cell to the acc",
     [OPCODE.XCHG_ACC_BX]: "XChanges the values in the acc and the bx register",
+    [OPCODE.MOV_MEM_SP]:
+        "Loads a value to acc. Memory address is stackpointer - op1",
+    [OPCODE.MOV_SP_MEM]:
+        "Stores the value of acc to memory. Memory address is stackpointer - op1",
 };
 
 export const MINIMASHINE_ASM_DECODE_TABLE_S = {
@@ -218,4 +236,6 @@ export const MINIMASHINE_ASM_DECODE_TABLE_S = {
     [OPCODE.MOV_BX_MEM]: "STOREB",
     [OPCODE.MOV_MEM_BX]: "LOADB",
     [OPCODE.XCHG_ACC_BX]: "XCHG",
+    [OPCODE.MOV_MEM_SP]: "GETSTACK",
+    [OPCODE.MOV_SP_MEM]: "SETSTACK",
 };

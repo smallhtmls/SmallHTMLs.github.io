@@ -1,5 +1,14 @@
 import { examples, loadEditorType } from "./display.js";
-import { ASSEMBLE_SELECT_E, CHECKBOX_BASEPOINTER, CHECKBOX_BX_REGISTER, CHECKBOX_STACKPOINTER, DARK_MODE_TOGGLE_E, MENU_URL_BUTTON_E } from "./elements.js";
+import {
+    ASSEMBLE_SELECT_E,
+    CHECKBOX_BASEPOINTER,
+    CHECKBOX_BX_REGISTER,
+    CHECKBOX_MOBILE_MODE_E,
+    CHECKBOX_STACKPOINTER,
+    DARK_MODE_TOGGLE_E,
+    MAIN_E,
+    MENU_URL_BUTTON_E,
+} from "./elements.js";
 import { OPTIONS } from "./options.js";
 import { setClassVisible, setContextMenu, setStyle } from "./util.js";
 function updateStyle(darkMode) {
@@ -66,6 +75,27 @@ export function postInitHeader() {
     updateSP(OPTIONS.hasSP());
     updateBP(OPTIONS.hasBP());
     updateBX(OPTIONS.hasBX());
+    updateMobile(OPTIONS.getMobileMode());
     ASSEMBLE_SELECT_E.value = OPTIONS.getLang();
     loadEditorType(OPTIONS.getLang());
 }
+
+export function updateMobile(mobileMode) {
+    OPTIONS.setLegacyMobile(mobileMode);
+    if (OPTIONS.getMobileMode() === "legacy") {
+        CHECKBOX_MOBILE_MODE_E.setAttribute("checked", "true");
+        if (MAIN_E.firstElementChild.id === "cpu") {
+            const items = Array.from(MAIN_E.children);
+            items.reverse().forEach((item) => MAIN_E.appendChild(item));
+        }
+    } else {
+        CHECKBOX_MOBILE_MODE_E.setAttribute("checked", "false");
+        if (MAIN_E.firstElementChild.id !== "cpu") {
+            const items = Array.from(MAIN_E.children);
+            items.reverse().forEach((item) => MAIN_E.appendChild(item));
+        }
+    }
+}
+CHECKBOX_MOBILE_MODE_E.onclick = () => {
+    updateMobile(CHECKBOX_MOBILE_MODE_E.getAttribute("checked") !== "true");
+};
