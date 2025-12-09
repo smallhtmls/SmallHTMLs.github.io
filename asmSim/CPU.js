@@ -8,8 +8,15 @@ import {
     setStackPointer,
     setBasePointer,
     setBXRegister,
+    setMessageBox,
+    MESSAGE_BOX_STATUS,
 } from "./display.js";
-import { ASSEMBLE_BUTTON_E, ASSEMBLE_SELECT_E, PROG_COUNTER_E, SAVE_FILE_BUTTON_E } from "./elements.js";
+import {
+    ASSEMBLE_BUTTON_E,
+    ASSEMBLE_SELECT_E,
+    PROG_COUNTER_E,
+    SAVE_FILE_BUTTON_E,
+} from "./elements.js";
 import { initEditor, editor } from "./editor.js";
 import { compileJava } from "./java.js";
 import { MINIMASHINE_ASM_DECODE_TABLE_S, OPCODE, REGISTER } from "./miniasm.js";
@@ -45,8 +52,8 @@ const FILTER_15th_BIT = 1n << 15n;
 function decode(key_i) {
     return MINIMASHINE_ASM_DECODE_TABLE_S[key_i];
 }
-const toSigned = x => (x & 0x8000n ? x - 0x10000n : x);
-const toUnsigned = x => (x < 0n ? x + 0x10000n : x);
+const toSigned = (x) => (x & 0x8000n ? x - 0x10000n : x);
+const toUnsigned = (x) => (x < 0n ? x + 0x10000n : x);
 
 /**
  * The CPU
@@ -56,7 +63,7 @@ class CPU {
         if (isMemory)
             return {
                 get: () => this.ram.read(Number(this.instructionData_i)),
-                set: s => this.ram.write(Number(this.instructionData_i)),
+                set: (s) => this.ram.write(Number(this.instructionData_i)),
             };
         switch (register) {
             case REGISTER.AX:
@@ -66,13 +73,13 @@ class CPU {
             get: () => {
                 throw "Not a register!";
             },
-            set: s => {
+            set: (s) => {
                 throw "Not a register!";
             },
         };
     }
     execute() {
-        let iq = v => this.currentInstruction_i == v;
+        let iq = (v) => this.currentInstruction_i == v;
         let calcDat_i;
 
         switch (this.currentInstruction_i) {
@@ -233,20 +240,28 @@ class CPU {
                 this.setAccu(this.instructionData_i);
                 break;
             case OPCODE.MOV_ACC_MEM:
-                this.ram.write(Number(this.instructionData_i), this.accumulator_i);
+                this.ram.write(
+                    Number(this.instructionData_i),
+                    this.accumulator_i
+                );
                 break;
             case OPCODE.MOV_CRY_ACC:
                 this.setAccu(this.statusRegister[FLAG_CARRIER] ? 1n : 0n);
                 break;
             case OPCODE.MOV_MEM_BX:
-                this.bxAccess.set(this.ram.read(Number(this.instructionData_i)));
+                this.bxAccess.set(
+                    this.ram.read(Number(this.instructionData_i))
+                );
                 break;
             //
             case OPCODE.MOV_VAL_BX:
                 this.bxAccess.set(this.instructionData_i);
                 break;
             case OPCODE.MOV_BX_MEM:
-                this.ram.write(Number(this.instructionData_i), this.bxAccess.get());
+                this.ram.write(
+                    Number(this.instructionData_i),
+                    this.bxAccess.get()
+                );
                 break;
             // CONTROL
             case OPCODE.STOP_SYMBOL:
@@ -254,6 +269,10 @@ class CPU {
                 this.instructionData_i = 0n;
                 this.step_n = 0;
                 this.prgCounter_n = 0;
+                setMessageBox(
+                    MESSAGE_BOX_STATUS.FINE,
+                    "Program ausgeführt... "
+                );
                 PROG_COUNTER_E.innerHTML = Math.floor(this.prgCounter_n);
                 break;
             case OPCODE.CON_TIN_UE0:
@@ -271,28 +290,48 @@ class CPU {
                 this.setStatusRegister(FLAG_NEGATIVE, calcDat_i < 0);
                 break;
             case OPCODE.JLT_MEM_NUL:
-                if (!this.statusRegister[FLAG_ZERO] && this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
+                if (
+                    !this.statusRegister[FLAG_ZERO] &&
+                    this.statusRegister[FLAG_NEGATIVE]
+                )
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case OPCODE.JLE_MEM_NUL:
-                if (this.statusRegister[FLAG_ZERO] || this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
+                if (
+                    this.statusRegister[FLAG_ZERO] ||
+                    this.statusRegister[FLAG_NEGATIVE]
+                )
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case OPCODE.JGT_MEM_NUL:
-                if (!this.statusRegister[FLAG_ZERO] && !this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
+                if (
+                    !this.statusRegister[FLAG_ZERO] &&
+                    !this.statusRegister[FLAG_NEGATIVE]
+                )
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case OPCODE.JGE_MEM_NUL:
-                if (this.statusRegister[FLAG_ZERO] || !this.statusRegister[FLAG_NEGATIVE]) this.setProgramCounter(Number(this.instructionData_i));
+                if (
+                    this.statusRegister[FLAG_ZERO] ||
+                    !this.statusRegister[FLAG_NEGATIVE]
+                )
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case OPCODE.JNE_MEM_NUL:
-                if (!this.statusRegister[FLAG_ZERO]) this.setProgramCounter(Number(this.instructionData_i));
+                if (!this.statusRegister[FLAG_ZERO])
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case OPCODE.JEQ_MEM_NUL:
-                if (this.statusRegister[FLAG_ZERO]) this.setProgramCounter(Number(this.instructionData_i));
+                if (this.statusRegister[FLAG_ZERO])
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case OPCODE.JOV_MEM_NUL:
-                if (this.statusRegister[FLAG_OVERFLOW]) this.setProgramCounter(Number(this.instructionData_i));
+                if (this.statusRegister[FLAG_OVERFLOW])
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case OPCODE.JOC_MEM_NUL:
-                if (this.statusRegister[FLAG_CARRIER]) this.setProgramCounter(Number(this.instructionData_i));
+                if (this.statusRegister[FLAG_CARRIER])
+                    this.setProgramCounter(Number(this.instructionData_i));
                 break;
             case OPCODE.JMP_MEM_NUL:
                 this.setProgramCounter(Number(this.instructionData_i));
@@ -330,7 +369,9 @@ class CPU {
                 if (calcDat_i > this.ram.maxAddr()) {
                     break;
                 }
-                this.setProgramCounter(Number(this.ram.read(Number(calcDat_i - 1n))));
+                this.setProgramCounter(
+                    Number(this.ram.read(Number(calcDat_i - 1n)))
+                );
                 this.spAccess.set(calcDat_i);
                 break;
             case OPCODE.RES_ERV_ADR:
@@ -339,6 +380,18 @@ class CPU {
             case OPCODE.REL_EAS_ADR:
                 this.spAccess.set(this.spAccess.get() + this.instructionData_i);
                 break;
+            case OPCODE.MOV_MEM_SP:
+                this.setAccu(
+                    this.ram.read(
+                        Number(this.spAccess.get() - this.instructionData_i)
+                    )
+                );
+                break;
+            case OPCODE.MOV_SP_MEM:
+                this.ram.write(
+                    Number(this.spAccess.get() - this.instructionData_i),
+                    this.accumulator_i
+                );
             // BX Register
             case OPCODE.XCHG_ACC_BX:
                 let bx = this.bxAccess.get();
@@ -377,25 +430,25 @@ class CPU {
         this.statusRegister = [false, false, false, false];
         this.axAccess = {
             get: () => this.accumulator_i,
-            set: s => this.setAccu(s),
+            set: (s) => this.setAccu(s),
         };
         this.bpAccess = {
             get: () => this.basePointer,
-            set: s => {
+            set: (s) => {
                 this.basePointer = s & 0xffffn;
                 setBasePointer(this.basePointer);
             },
         };
         this.spAccess = {
             get: () => this.stackPointer,
-            set: s => {
+            set: (s) => {
                 this.stackPointer = s & 0xffffn;
                 setStackPointer(this.stackPointer);
             },
         };
         this.bxAccess = {
             get: () => this.bxRegister_i,
-            set: s_i => {
+            set: (s_i) => {
                 this.bxRegister_i = s_i;
                 setBXRegister(s_i);
             },
@@ -410,7 +463,12 @@ class CPU {
     setStatusRegister(flag_i, val_b) {
         if (this.statusRegister[flag_i] != val_b) {
             this.statusRegister[flag_i] = val_b;
-            updateStatusRegister(this.statusRegister[0], this.statusRegister[1], this.statusRegister[2], this.statusRegister[3]);
+            updateStatusRegister(
+                this.statusRegister[0],
+                this.statusRegister[1],
+                this.statusRegister[2],
+                this.statusRegister[3]
+            );
         }
     }
     incProgramCounter() {
@@ -422,9 +480,13 @@ class CPU {
         PROG_COUNTER_E.innerHTML = addr_n;
     }
     stop() {
+        clearInterval(this.intervalNumber);
+        this.intervalNumber = null;
+    }
+    clear() {
         this.prgCounter_n = 0;
         this.step_n = 0;
-        this.intervalNumber = null;
+        this.stop();
         this.axAccess.set(0n);
         this.spAccess.set(this.ram.maxAddr());
         this.bpAccess.set(this.ram.maxAddr());
@@ -435,8 +497,8 @@ class CPU {
         this.intervalNumber = setInterval(() => {
             this.step();
             if (this.currentInstruction_i === OPCODE.STOP_SYMBOL) {
-                clearInterval(this.intervalNumber);
-                this.intervalNumber = null;
+                this.stop();
+                setMessageBox(MESSAGE_BOX_STATUS.FINE, "Program ausgeführt!");
             }
         }, 1);
     }
@@ -447,34 +509,49 @@ class CPU {
         console.log("Finshed Step:", this.prgCounter_n);
     }
     smallStep() {
-        switch (this.step_n) {
-            case STEP_LOAD_INSTRUCTION:
-                this.currentInstruction_i = this.ram.read(this.prgCounter_n, 2n);
-                setInstructionDisplay(this.currentInstruction_i);
-                this.incProgramCounter();
-                break;
-            case STEP_LOAD_DATA:
-                this.instructionData_i = this.ram.read(this.prgCounter_n, this.ram.byteCount_i);
-                setInstructionData(this.instructionData_i);
-                this.incProgramCounter();
-                break;
-            case STEP_TRANSLATE_INSTRUCTION:
-                const instr_s = decode(this.currentInstruction_i);
-                if (instr_s == undefined) {
-                    alert("Undefined Opcode! Resetting!");
-                    this.stop();
-                }
-                setInstructionDisplay(instr_s);
-                break;
-            case STEP_EXECUTE:
-                this.execute();
-                this.step_n = -1;
-                break;
+        try {
+            switch (this.step_n) {
+                case STEP_LOAD_INSTRUCTION:
+                    this.currentInstruction_i = this.ram.read(
+                        this.prgCounter_n,
+                        2n
+                    );
+                    setInstructionDisplay(this.currentInstruction_i);
+                    this.incProgramCounter();
+                    break;
+                case STEP_LOAD_DATA:
+                    this.instructionData_i = this.ram.read(
+                        this.prgCounter_n,
+                        this.ram.byteCount_i
+                    );
+                    setInstructionData(this.instructionData_i);
+                    this.incProgramCounter();
+                    break;
+                case STEP_TRANSLATE_INSTRUCTION:
+                    const instr_s = decode(this.currentInstruction_i);
+                    if (instr_s == undefined) {
+                        alert("Undefined Opcode! Resetting!");
+                        this.clear();
+                    }
+                    setInstructionDisplay(instr_s);
+                    break;
+                case STEP_EXECUTE:
+                    this.execute();
+                    this.step_n = -1;
+                    break;
+            }
+        } catch (e) {
+            setMessageBox(MESSAGE_BOX_STATUS.ERROR, "Execution Error: " + e);
+            this.stop();
+            this.step_n = -1;
         }
         this.step_n++;
     }
     setAccu(accu_i, isUnsigned = false) {
-        this.setStatusRegister(isUnsigned ? FLAG_CARRIER : FLAG_OVERFLOW, accu_i > BIT_MODE[16]);
+        this.setStatusRegister(
+            isUnsigned ? FLAG_CARRIER : FLAG_OVERFLOW,
+            accu_i > BIT_MODE[16]
+        );
         this.accumulator_i = accu_i & 0xffffn;
         setAccuDisplay(this.accumulator_i);
     }
@@ -487,7 +564,7 @@ Memory.setBitMode(BIT_MODE[16]);
 //updateMem();
 function assemble() {
     switch (ASSEMBLE_SELECT_E.value) {
-        case "mini@asm":
+        case "mini-asm":
             Memory.translateMinimashineAsm(editor.getValue().trim());
             break;
         case "java":
@@ -498,24 +575,29 @@ function assemble() {
 ASSEMBLE_BUTTON_E.addEventListener("click", assemble);
 initEditor(blinkAssemble, initDisplay);
 
-document.addEventListener("keydown", e => {
+document.addEventListener("keydown", (e) => {
     if (!e.ctrlKey) return;
     let preventDefault = true;
     switch (e.key) {
-        case "1":
+        case "e":
+            ASSEMBLE_BUTTON_E.click();
+            setTimeout(() => {
+                currentProcessor.run();
+            }, 200);
+        case "b":
             ASSEMBLE_BUTTON_E.click();
             break;
-        case "2":
+        case "r":
             currentProcessor.run();
             break;
-        case "3":
+        case "m":
             currentProcessor.step();
             break;
-        case "4":
+        case "q":
             currentProcessor.smallStep();
             break;
-        case "X":
-            currentProcessor.stop();
+        case "y":
+            currentProcessor.clear();
             break;
         case "s":
             SAVE_FILE_BUTTON_E.click();

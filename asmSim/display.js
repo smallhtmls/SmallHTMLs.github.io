@@ -21,12 +21,16 @@ import {
     STACK_POINTER_E,
     BX_REGISTER_E,
     CHECKBOX_STACKPOINTER,
+    MESSAGE_BOX_E,
 } from "./elements.js";
-import { MINIMASHINE_ASM_DECODE_TABLE_S, CODE_DESCRIPTION_S } from "./miniasm.js";
+import {
+    MINIMASHINE_ASM_DECODE_TABLE_S,
+    CODE_DESCRIPTION_S,
+} from "./miniasm.js";
 import { editor } from "./editor.js";
 import { OPTIONS } from "./options.js";
 import { postInitHeader } from "./headerbar.js";
-import { download, setClassVisible } from "./util.js";
+import { download, exitsValueInObject, setClassVisible } from "./util.js";
 const SVG_NS = "http://www.w3.org/2000/svg";
 const FAC_LOG2_10 = Math.log(2) / Math.log(10);
 
@@ -52,7 +56,9 @@ export function int16StringToBigint(str) {
 }
 
 export function setDataBus(padding_i, nmb_i) {
-    let zeros_s = BigInt.asUintN(16, nmb_i).toString(2).padStart(Number(padding_i), "0");
+    let zeros_s = BigInt.asUintN(16, nmb_i)
+        .toString(2)
+        .padStart(Number(padding_i), "0");
 
     zeros_s = zeros_s.match(/.{1,8}/g).join(" ");
     zeros_s = zeros_s.split(" ");
@@ -96,14 +102,22 @@ export function setStackPointer(accu_i) {
     STACK_POINTER_E.innerHTML = getStringInt16(accu_i);
 }
 export function setInstructionDisplay(id_i__name_s) {
-    INSTRUCTION_ID_E.innerHTML = id_i__name_s.constructor.name == "BigInt" ? getStringInt16(id_i__name_s) : id_i__name_s;
+    INSTRUCTION_ID_E.innerHTML =
+        id_i__name_s.constructor.name == "BigInt"
+            ? getStringInt16(id_i__name_s)
+            : id_i__name_s;
 }
 export function setInstructionData(data_i) {
     INSTRUCTION_DATA_E.innerHTML = getStringInt16(data_i);
 }
 let lastRamTable;
 let ntoDisplay_n;
-export function renderRamTable(renderMode = 8n, ramsize = 5000n, getCell_f, writeIfAllowed_f) {
+export function renderRamTable(
+    renderMode = 8n,
+    ramsize = 5000n,
+    getCell_f,
+    writeIfAllowed_f
+) {
     const chess_count = ramsize / (renderMode / 8n);
     ntoDisplay_n = Math.ceil(FAC_LOG2_10 * Number(renderMode));
     const table_e = document.createElement("table");
@@ -121,7 +135,7 @@ export function renderRamTable(renderMode = 8n, ramsize = 5000n, getCell_f, writ
             table_e.lastElementChild.appendChild(td_e);
         }
         const obj_e = document.createElement("td");
-        obj_e.onclick = e => {
+        obj_e.onclick = (e) => {
             let str = prompt("Enter new Value!");
             if (!str) return;
             let int_i = int16StringToBigint(str);
@@ -141,7 +155,16 @@ export function renderRamTable(renderMode = 8n, ramsize = 5000n, getCell_f, writ
 }
 export function updateMem() {
     let a = BIT_MODE_SELECTOR_E.value;
-    let val = a == "8" ? BIT_MODE_8 : a == "16" ? BIT_MODE_16 : a === "32" ? BIT_MODE_32 : a == "64" ? BIT_MODE_64 : BIT_MODE_8;
+    let val =
+        a == "8"
+            ? BIT_MODE_8
+            : a == "16"
+            ? BIT_MODE_16
+            : a === "32"
+            ? BIT_MODE_32
+            : a == "64"
+            ? BIT_MODE_64
+            : BIT_MODE_8;
     Memory.setBitMode(val);
 }
 export function blinkAssemble() {
@@ -156,18 +179,35 @@ export function updateRamRender(objects, source) {
     if (!lastRamTable) return;
     for (let q in objects) {
         const id = Number(q);
-        const element_e = lastRamTable.children[Math.floor(id / 10) + 1].children[(id % 10) + 1];
+        const element_e =
+            lastRamTable.children[Math.floor(id / 10) + 1].children[
+                (id % 10) + 1
+            ];
         element_e.innerText = getStringInt16(objects[q]); //.padStart(ntoDisplay_n, "0");
         element_e.classList.add(source == 0 ? "userChanged" : "processChanged");
     }
 }
 export function updateStatusRegister(zero_b, n_b, v_b, c_b) {
-    STATUS_REGISTER_E.innerHTML = "Z:" + (zero_b ? "I" : "0") + " N:" + (n_b ? "I" : "0") + " V:" + (v_b ? "I" : "0") + " C:" + (c_b ? "I" : "0");
+    STATUS_REGISTER_E.innerHTML =
+        "Z:" +
+        (zero_b ? "I" : "0") +
+        " N:" +
+        (n_b ? "I" : "0") +
+        " V:" +
+        (v_b ? "I" : "0") +
+        " C:" +
+        (c_b ? "I" : "0");
 }
 
 function getDTNow() {
     let date = new Date();
-    return `${date.getFullYear()}${date.getMonth().toString().padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${date.getHours()}${date.getMinutes()}`;
+    return `${date.getFullYear()}${date
+        .getMonth()
+        .toString()
+        .padStart(2, "0")}${date
+        .getDate()
+        .toString()
+        .padStart(2, "0")}_${date.getHours()}${date.getMinutes()}`;
 }
 SAVE_FILE_BUTTON_E.onclick = () => {
     download("smallhtmls_" + getDTNow() + ".miniasm", editor.getValue());
@@ -188,7 +228,11 @@ for (let key_s in MINIMASHINE_ASM_DECODE_TABLE_S) {
     const val_e = document.createElement("td");
     const desc_e = document.createElement("td");
     key_e.innerText = val;
-    val_e.innerText = "0x" + key_i.toString(16).padStart(4, "0") + " | " + getStringInt16(key_i);
+    val_e.innerText =
+        "0x" +
+        key_i.toString(16).padStart(4, "0") +
+        " | " +
+        getStringInt16(key_i);
     desc_e.innerText = desc_s ? desc_s : "";
     line_e.appendChild(key_e);
     line_e.appendChild(val_e);
@@ -196,7 +240,7 @@ for (let key_s in MINIMASHINE_ASM_DECODE_TABLE_S) {
     STRUC_TABLE_BODY_E.appendChild(line_e);
 }
 
-Array.from(document.getElementsByClassName("fscButton")).forEach(e => {
+Array.from(document.getElementsByClassName("fscButton")).forEach((e) => {
     e.onclick = () => {
         if (document.fullscreenElement == null) {
             e.parentElement.requestFullscreen();
@@ -206,9 +250,23 @@ Array.from(document.getElementsByClassName("fscButton")).forEach(e => {
         }
     };
 });
+function fixXMLIndent(code) {
+    code = code.split("\n");
+    for (let i = 0; i < code.length; i++) {
+        code[i] = code[i].trim();
+        if (code[i].length === 0) {
+            code.splice(i, 1);
+            i--;
+        }
+    }
+    return code.join("\n");
+}
 export let examples = null;
 function loadCode(example, langType) {
-    editor.setValue(examples[langType][example].code);
+    console.log(examples, langType, example);
+    let code = examples[langType][example].code;
+    code = fixXMLIndent(code);
+    editor.setValue(code);
     monaco.editor.setModelLanguage(editor.getModel(), langType);
     switch (langType) {
         case "java":
@@ -222,11 +280,11 @@ export function loadEditorType(val) {
     const t = examples[val];
     LOAD_EXAMPLE_E.innerHTML = "";
     switch (val) {
-        case "mini@asm":
-            ASSEMBLE_BUTTON_E.innerText = "Assemblieren (Strg+1)";
+        case "mini-asm":
+            ASSEMBLE_BUTTON_E.innerText = "Assemblieren (Strg+B)";
             break;
         case "java":
-            ASSEMBLE_BUTTON_E.innerText = "Übersetzen (Strg+1)";
+            ASSEMBLE_BUTTON_E.innerText = "Übersetzen (Strg+B)";
     }
 
     if (t) {
@@ -237,27 +295,55 @@ export function loadEditorType(val) {
             elm.value = z;
             LOAD_EXAMPLE_E.appendChild(elm);
         }
-        LOAD_EXAMPLE_E.value = "sample";
+        LOAD_EXAMPLE_E.value = "default";
         loadCode(LOAD_EXAMPLE_E.value, ASSEMBLE_SELECT_E.value);
     }
 }
 
 export async function initDisplay() {
-    let data = await fetch("./examples.json");
-    data = await data.json();
-    if (!data.examples) {
-        return;
+    let data = await fetch("./examples.xml");
+    data = await data.text();
+    data = new window.DOMParser().parseFromString(data, "text/xml");
+    examples = {};
+    let exampleXML = data.querySelector("asmSim examples");
+    for (const exampleElm of exampleXML.children) {
+        let d = {};
+        for (const elm of exampleElm.children) {
+            let item = {};
+            for (let originalItem of elm.children) {
+                item[originalItem.tagName] = originalItem.innerHTML;
+            }
+
+            d[elm.tagName] = item;
+        }
+        examples[exampleElm.tagName] = d;
     }
-    examples = data.examples;
+    console.log(examples);
     setClassVisible("stackp", OPTIONS.hasSP());
     setClassVisible("stackbasep", OPTIONS.hasBP());
     setClassVisible("bxRegister", OPTIONS.hasBX());
     postInitHeader();
 }
-ASSEMBLE_SELECT_E.onchange = e => {
+ASSEMBLE_SELECT_E.onchange = (e) => {
     OPTIONS.setLang(ASSEMBLE_SELECT_E.value);
     loadEditorType(ASSEMBLE_SELECT_E.value);
 };
-LOAD_EXAMPLE_E.onchange = e => {
+LOAD_EXAMPLE_E.onchange = (e) => {
     loadCode(LOAD_EXAMPLE_E.value, ASSEMBLE_SELECT_E.value);
 };
+export const MESSAGE_BOX_STATUS = {
+    NONE: "none",
+    ERROR: "error",
+    WARN: "warn",
+    INFO: "info",
+    FINE: "fine",
+};
+export function setMessageBox(status, text, displayTime = 4000) {
+    if (!exitsValueInObject(status, MESSAGE_BOX_STATUS)) return;
+    MESSAGE_BOX_E.innerText = text;
+    MESSAGE_BOX_E.setAttribute("data-status", status);
+    if (displayTime !== Infinity)
+        setTimeout(() => {
+            MESSAGE_BOX_E.setAttribute("data-status", MESSAGE_BOX_STATUS.NONE);
+        }, displayTime);
+}

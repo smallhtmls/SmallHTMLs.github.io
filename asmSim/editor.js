@@ -1,9 +1,13 @@
 import { MINIMASHINE_ASM_DECODE_TABLE_S } from "./miniasm.js";
 
 export let editor;
-const LANG = "mini@asm";
+const LANG = "mini-asm";
 export function initEditor(onChange, onInit) {
-    require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
+    require.config({
+        paths: {
+            vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs",
+        },
+    });
     require(["vs/editor/editor.main"], function () {
         monaco.languages.register({ id: LANG });
         monaco.languages.setMonarchTokensProvider(LANG, {
@@ -17,7 +21,7 @@ export function initEditor(onChange, onInit) {
                         new RegExp(
                             "\\b(" +
                                 Object.values(MINIMASHINE_ASM_DECODE_TABLE_S)
-                                    .map(v => {
+                                    .map((v) => {
                                         if (typeof v === "string") {
                                             return v;
                                         } else return v.join("|");
@@ -28,7 +32,10 @@ export function initEditor(onChange, onInit) {
                         "keyword",
                     ],
                     [/[A-Za-z0-9_\-\.@#$%/]*:/, "label"],
-                    [/[+-]?(?:0[xX][0-9A-Fa-f_]+|0[bB][01_]+|0[oO][0-7_]+|[0-9][0-9_]*)/, "number"],
+                    [
+                        /[+-]?(?:0[xX][0-9A-Fa-f_]+|0[bB][01_]+|0[oO][0-7_]+|[0-9][0-9_]*)/,
+                        "number",
+                    ],
                     [/;.*$/, "comment"],
                 ],
             },
@@ -57,7 +64,7 @@ export function initEditor(onChange, onInit) {
             fontSize: 14,
             automaticLayout: true,
         });
-        editor.onDidChangeModelContent(event => {
+        editor.onDidChangeModelContent((event) => {
             onChange();
         });
         onInit();

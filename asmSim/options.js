@@ -3,9 +3,10 @@ import { encodeUnit, decodeUnit } from "./util.js";
 export class Options {
     static default = {
         darkMode: "false",
-        lang: "mini@asm",
+        lang: "mini-asm",
         memSize: "5k",
         regs: "",
+        mobile: "",
     };
     /**
      * @type {string}
@@ -76,6 +77,13 @@ export class Options {
             this.regs = this.regs.replace(reg, "");
             this.save();
         }
+    }
+    setLegacyMobile(k) {
+        this.mobile = k ? "legacy" : "";
+        this.save();
+    }
+    getMobileMode() {
+        return this.mobile;
     }
     _hasReg(reg) {
         return this.regs.indexOf(reg) !== -1;
