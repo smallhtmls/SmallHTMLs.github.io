@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ASM SIM Changelog</title>
+        <style>
+            td {
+                vertical-align: top;
+                border-bottom-style: solid;
+                border-color: black;
+                border-width: 1px;
+            }
+            asm-code {
+                background-color: rgba(0, 0, 0, 0.3);
+                font-family: "Courier New", Courier, monospace;
+                border-style: solid;
+                border-width: 1px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Asm Sim Changelog</h1>
+        <table>
+            <thead>
+                <tr>
+                    <td>Version</td>
+                    <td>Changes</td>
+                </tr>
+            </thead>
+            <tr>
+                <td>0.0.1</td>
+                <td>
+                    release: beta version for asmSim<br />
+                    First working version - not perfect at all
+                </td>
+            </tr>
+            <tr>
+                <td>0.0.2</td>
+                <td>
+                    feat: asmSim has stack support now and a bx register<br />
+                    <h3>Changes:</h3>
+                    - Added the Headerbar Options<br />
+                    - Added URL Parameter Options <br />
+                    - Added second Register called bx<br />
+                    - Preparations for stack pointer work<br />
+                    <h3>URL Parameter</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Parameters</td>
+                                <td>Options</td>
+                                <td>Defaults to</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><asm-code>"darkMode"</asm-code></td>
+                                <td><asm-code>true | false</asm-code></td>
+                                <td><asm-code>false</asm-code></td>
+                            </tr>
+                            <tr>
+                                <td><asm-code>"lang"</asm-code></td>
+                                <td><asm-code>"mini@asm"</asm-code></td>
+                                <td><asm-code>"mini@asm"</asm-code></td>
+                            </tr>
+                            <tr>
+                                <td><asm-code>"memSize"</asm-code></td>
+                                <td><asm-code>(&lt;number&gt;"k")|(&lt;number&gt;)</asm-code></td>
+                                <td><asm-code>"5k"</asm-code></td>
+                            </tr>
+                            <tr>
+                                <td><asm-code>"regs"</asm-code></td>
+                                <td><asm-code>["bx"]["bp"]</asm-code></td>
+                                <td><asm-code>""</asm-code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h3>BX Register Instructions</h3>
+                    LOADBI => LOADI for BX <br />
+                    LOADB => LOAD for BX <br />
+                    STOREB => STORE for BX <br />
+                    XCHG => Switches the two registers ACCUMULATOR and BX
+                </td>
+            </tr>
+            <tr>
+                <td>0.0.3</td>
+                <td>
+                    feat: Added Examples and GetStack SetStack<br />
+                    <h3>Changes</h3>
+                    - ID Change: <asm-code>"mini@asm"</asm-code> =now> <asm-code>"mini-asm"</asm-code> <br />
+                    - Added mobile mode => key: <asm-code>"mobile"</asm-code> defaults: <asm-code>""</asm-code>; options: <asm-code>"legacy"|""</asm-code><br />
+                    - Added GETSTACK => Loads a value to acc. Memory address is stackpointer - op1<br />
+                    - Added SETSTACK => Stores the value of acc to memory. Memory address is stackpointer - op1
+                </td>
+            </tr>
+            <tr>
+                <td>0.0.4</td>
+                <td>
+                    German Version now entirely German. English Version under:
+                    <a href="https://smallhtmls.github.io/asmSim-en/">https://smallhtmls.github.io/asmSim/en/</a><br />
+                    Speed control of processor via dial and option (no auto-update)
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

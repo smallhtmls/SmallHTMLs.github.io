@@ -1,5 +1,6 @@
 import { getURIParams, setURIParams } from "./util.js";
 import { encodeUnit, decodeUnit } from "./util.js";
+
 export class Options {
     static default = {
         darkMode: "false",
@@ -7,6 +8,7 @@ export class Options {
         memSize: "5k",
         regs: "",
         mobile: "",
+        cpuSpeed: "1",
     };
     /**
      * @type {string}
@@ -62,6 +64,12 @@ export class Options {
     }
     setBX(has) {
         this._setReg("bx", has);
+    }
+    getCPUSpeed() {
+        return parseInt(this.cpuSpeed);
+    }
+    setCPUSpeed(speed) {
+        this.cpuSpeed = speed.toString(10);
     }
     /**
      *

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>AsmSimulation</title>
         <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-        <link href="index.css" rel="stylesheet" />
-        <link href="" rel="data-asmSim-path" id="linkMLPath" />
+        <link href="../index.css" rel="stylesheet" />
+        <link href="" rel="data-asmSim-examples" />
     </head>
     <body>
         <div id="menuBar">
@@ -20,10 +20,10 @@
                 <label for="stackPointerCheckbox">Stack-Pointer:</label><sasm-checkbox id="stackPointerCheckbox"></sasm-checkbox
                 ><label for="basePointerCheckbox">Base-Pointer:</label><sasm-checkbox id="basePointerCheckbox"></sasm-checkbox> <label for="bxRegisterCheckbox">BX Register:</label
                 ><sasm-checkbox id="bxRegisterCheckbox"></sasm-checkbox> <label for="mobileModeCheckbox">Mobile-Mode:</label
-                ><sasm-checkbox id="mobileModeCheckbox"></sasm-checkbox> <label>CPU-Geschw.:</label><input id="cpuSpeedInput" min="1" max="2001" step="250" type="range" />
+                ><sasm-checkbox id="mobileModeCheckbox"></sasm-checkbox> <label>CPU-Speed:</label><input id="cpuSpeedInput" min="1" max="2001" step="250" type="range" />
             </div>
-            <a class="headerItem" id="langLink" href="./en">English</a>
-            <div class="headerItem" id="darkmodeContainer">Darkmode: <sasm-checkbox id="darkmodeToggle"></sasm-checkbox></div>
+            <a class="headerItem" id="langLink" href="../">Deutsch</a>
+            <div class="headerItem" id="darkmodeContainer"><label for="#darkmodeToggle">Darkmode:</label> <sasm-checkbox id="darkmodeToggle"></sasm-checkbox></div>
             <div id="version">Version: <span style="color: red">Beta</span> 0.0.3</div>
         </div>
         <main>
@@ -37,7 +37,7 @@
                         </marker>
                     </defs>
                     <g id="accumulator" transform="translate(170 160)">
-                        <text class="svgText" id="accumulatorTitle" x="3" y="15">Akkumulator</text>
+                        <text class="svgText" id="accumulatorTitle" x="3" y="15">Accumulator</text>
                         <text class="svgText" id="accumulatorText" x="8" y="47">0</text>
                         <rect x="0" y="30" width="200" height="30" fill="rgba(0,128,255,0.5)"></rect>
                     </g>
@@ -70,7 +70,7 @@
                         <rect x="200" y="5" width="50" height="50" stroke="green" class="stdRect" onclick="Processor.clear();"></rect>
                         <text x="212" y="65" class="controlButtonSymbol svgText hint" onclick="Processor.step();">Strg+Y</text>
                         <rect x="210" y="15" width="30" height="30" class="controlButtonSymbol svgText" onclick="Processor.clear();"></rect>
-                        <text class="svgText" x="10" y="83">Befehl:</text>
+                        <text class="svgText" x="10" y="83">Instruction:</text>
                         <rect x="10" y="90" width="75" height="30" class="stdRect blackRect"></rect>
                         <rect x="85" y="90" width="200" height="30" class="stdRect blackRect"></rect>
                         <text class="svgtext" id="instructionId" x="12" y="110"></text>
@@ -78,17 +78,17 @@
                     </g>
                     <!---->
 
-                    <text class="svgText busName" x="530" y="50">Steuerbus</text>
+                    <text class="svgText busName" x="530" y="50">Control Bus</text>
                     <text class="svgText" x="500" y="90" id="controlBusState"></text>
                     <line x1="470" y1="100" x2="690" y2="100" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="green"></line>
-                    <text class="svgText busName" x="530" y="150">Addressbus</text>
+                    <text class="svgText busName" x="530" y="150">Address Bus</text>
                     <text class="svgText" x="500" y="180" id="addressBusState"></text>
                     <line x1="470" y1="200" x2="690" y2="200" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="red"></line>
-                    <text class="svgText busName" x="530" y="300">Datenbus</text>
+                    <text class="svgText busName" x="530" y="300">Data Bus</text>
 
                     <!---->
-                    <text class="svgText" x="20" y="30">Program-</text>
-                    <text class="svgText" x="20" y="50">Zähler:</text>
+                    <text class="svgText" x="20" y="30">Program</text>
+                    <text class="svgText" x="20" y="50">Counter:</text>
                     <rect x="15" y="60" width="130" height="30" fill="transparent" stroke="red"></rect>
                     <text class="svgText" x="20" y="80" id="programCounter">0</text>
 
@@ -135,8 +135,8 @@
                 <select class="button" id="assembleSelect">
                     <option value="mini-asm" id="">mini-asm</option>
                     <!--  <option value="java">java</option>--></select
-                ><input id="openFile" type="file" /><button class="button" id="saveFile">Speichern</button>
-                Beispiel:
+                ><input id="openFile" type="file" /><button class="button" id="saveFile">Save</button>
+                Example:
                 <select id="loadExample" class="button"></select>
                 <div class="fscButton" id="codeFSC">⛶</div>
                 <button id="assembleButton" class="button"></button>
@@ -148,60 +148,60 @@
             <div id="documentationOuter">
                 <div class="fscButton" id="documentationFSC">⛶</div>
                 <div id="documentation">
-                    <h1>Dokumentation</h1>
+                    <h1>Documentation</h1>
                     <p>
-                        Dieses Projekt ist inspiert an Albert Wiedemanns "Minimaschine"
-                        <a href="https://schule.awiedemann.de/minimaschine.html">hier</a><br />
-                        <b>Ctrl+E assembliert das Projekt und führt es aus</b>
+                        This project is inspired by the "Minimaschine" Albert Wiedemann designed:
+                        <a href="https://schule.awiedemann.de/minimaschine.html">here</a><br />
+                        <b>Press Ctrl+E to assemble and run the program </b>
                     </p>
-                    <h2>Unterstützung</h2>
+                    <h2>Support</h2>
                     <span style="color: red"
-                        >Definitionen: acc = Akkumulator | [mem] = Wert einer Speicherzelle | op1 = Der Operation übergebene Daten (operator 1) | sp = Stapelspeicher</span
+                        >Defintions: acc = Accumulator | [mem] = Value of a memory cell | op1 = Data provided with the instruction (operator 1) | sp = Stack Pointer</span
                     >
-                    <p>Das Projekt unterstütz derzeit eine erweiterung der Minimaschine Assembler Instructions (ID: mini-asm)</p>
-                    <h2>Befehlssatz</h2>
+                    <p>This project currently only supports the Minimaschine Assembler Instructions (here: mini-asm)</p>
+                    <h2>Instructions</h2>
                     <table id="strucTable">
                         <thead>
                             <tr>
-                                <td>Befehl</td>
-                                <td>Maschinencode</td>
-                                <td>Beschreibung</td>
+                                <td>instr.</td>
+                                <td>Opcode</td>
+                                <td>Description</td>
                             </tr>
                         </thead>
                         <tbody id="strucTableBody"></tbody>
                     </table>
-                    <h2>Kurzbefehle</h2>
+                    <h2>Shortcuts</h2>
                     <table>
                         <thead>
                             <tr>
-                                <td>Tasten</td>
-                                <td>Beschreibung</td>
+                                <td>Keys</td>
+                                <td>Description</td>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>Ctrl+B</td>
-                                <td>Assembliert / Baut den Code (Build)</td>
+                                <td>assemble / Build the code</td>
                             </tr>
                             <tr>
                                 <td>Ctrl+E</td>
-                                <td>Assembliert und führt aus (Execute)</td>
+                                <td>build and Execute the code</td>
                             </tr>
                             <tr>
                                 <td>Ctrl+R</td>
-                                <td>Führt die Befehle im Speicher aus (Run)</td>
+                                <td>Run the code in RAM</td>
                             </tr>
                             <tr>
                                 <td>Ctrl+Q</td>
-                                <td>kleinster quantifizierbarer Schritt</td>
+                                <td>smallest Quantifiable step => sub step</td>
                             </tr>
                             <tr>
                                 <td>Ctrl+M</td>
-                                <td>Großer Schritt (Major Step)</td>
+                                <td>major step</td>
                             </tr>
                             <tr>
                                 <td>Ctrl+Y</td>
-                                <td>Stoppt das Program</td>
+                                <td>stop clear major registers</td>
                             </tr>
                         </tbody>
                     </table>
@@ -210,9 +210,9 @@
                         <thead>
                             <tr>
                                 <td>Parameter</td>
-                                <td>Optionen</td>
-                                <td>Standardwert</td>
-                                <td>Beschreibung</td>
+                                <td>Option</td>
+                                <td>Defaults to</td>
+                                <td>Description</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -220,48 +220,47 @@
                                 <td><asm-code>"darkMode"</asm-code></td>
                                 <td><asm-code>true | false</asm-code></td>
                                 <td><asm-code>false</asm-code></td>
-                                <td>Aktivert die dunkle Seite der Macht! ;-)</td>
+                                <td>Activates the dark side!</td>
                             </tr>
                             <tr>
                                 <td><asm-code>"lang"</asm-code></td>
                                 <td><asm-code>"mini-asm"</asm-code></td>
                                 <td><asm-code>"mini-asm"</asm-code></td>
-                                <td>Unterstützung für weitere Programmiersprachen</td>
+                                <td>Support for other types programming languages</td>
                             </tr>
                             <tr>
                                 <td><asm-code>"memSize"</asm-code></td>
                                 <td><asm-code>(&lt;number&gt;"k")|(&lt;number&gt;)</asm-code></td>
                                 <td><asm-code>"5k"</asm-code></td>
-                                <td>Größe des Speichers</td>
+                                <td>The size of the memory</td>
                             </tr>
                             <tr>
                                 <td><asm-code>"regs"</asm-code></td>
                                 <td><asm-code>["bx"]["bp"]</asm-code></td>
                                 <td><asm-code>""</asm-code></td>
-                                <td>Aktiviert weitere register</td>
+                                <td>Actives other registers</td>
                             </tr>
                             <tr>
                                 <td><asm-code>"mobile"</asm-code></td>
                                 <td><asm-code>""|"legacy"</asm-code></td>
                                 <td><asm-code>""</asm-code></td>
-                                <td>Legacy: IPad Support: Tauscht die Anordnung der einzelnen Fenster bis eine besser Lösung gefunden ist.</td>
+                                <td>Legacy: IPad Support: Shuffles the different windows around to</td>
                             </tr>
                             <tr>
                                 <td><asm-code>"cpuSpeed"</asm-code></td>
                                 <td><asm-code>(&lt;number&gt;)</asm-code></td>
                                 <td><asm-code>"1"</asm-code></td>
-                                <td>Prozessor Abarbeitungsgeschwindigkeit: Wartezeit zwischen den einzelnen Schritten in ms</td>
+                                <td>Prozessor Processing speed: Waitingtime between the major steps in ms</td>
                             </tr>
                         </tbody>
                     </table>
-
-                    <h2>Projekt-Information</h2>
+                    <h2>Project Information</h2>
                     <br />
-                    Kontakt Information: <a href="mailto://noahp07.schools@gmail.com">noahp07.schools@gmail.com</a> <br />
-                    Versionänderungen: <a href="./changelog.html">Changelog</a>
+                    Contact Information: <a href="mailto://noahp07.schools@gmail.com">noahp07.schools@gmail.com</a> <br />
+                    Version Changes: <a href="../changelog.html">Changelog</a>
                 </div>
             </div>
         </main>
-        <script src="./js/CPU.js" type="module"></script>
+        <script src="../js/CPU.js" type="module"></script>
     </body>
 </html>
