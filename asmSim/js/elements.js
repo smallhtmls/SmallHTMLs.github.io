@@ -1,11 +1,11 @@
 //GLOBAL ELEMENTS
 let dispInit;
 //
+
 export const DATA_BUS_BIT_E = document.getElementById("dataBusBit");
 export const CONTROL_BUS_STATE_E = document.getElementById("controlBusState");
 export const ADDRESS_BUS_STATE_E = document.getElementById("addressBusState");
-export const DATA_BUS_NUMBER_E =
-    document.getElementsByClassName("dataBusNumber");
+export const DATA_BUS_NUMBER_E = document.getElementsByClassName("dataBusNumber");
 export const PROG_COUNTER_E = document.getElementById("programCounter");
 export const INSTRUCTION_ID_E = document.getElementById("instructionId");
 export const INSTRUCTION_DATA_E = document.getElementById("instructionData");
@@ -33,16 +33,11 @@ export const STACK_BASE_POINTER_E = document.getElementById("stackBasePointer");
 export const STACK_POINTER_E = document.getElementById("stackPointer");
 export const BX_REGISTER_E = document.getElementById("bxRegisterText");
 //
-export const CHECKBOX_STACKPOINTER = document.getElementById(
-    "stackPointerCheckbox"
-);
-export const CHECKBOX_BASEPOINTER = document.getElementById(
-    "basePointerCheckbox"
-);
-export const CHECKBOX_BX_REGISTER =
-    document.getElementById("bxRegisterCheckbox");
-export const CHECKBOX_MOBILE_MODE_E =
-    document.getElementById("mobileModeCheckbox");
+export const CHECKBOX_STACKPOINTER = document.getElementById("stackPointerCheckbox");
+export const CHECKBOX_BASEPOINTER = document.getElementById("basePointerCheckbox");
+export const CHECKBOX_BX_REGISTER = document.getElementById("bxRegisterCheckbox");
+export const CHECKBOX_MOBILE_MODE_E = document.getElementById("mobileModeCheckbox");
+export const RANGE_CPU_SPEED_E = document.getElementById("cpuSpeedInput");
 //
 export const MESSAGE_BOX_E = document.getElementById("cpuMessageBox");
 

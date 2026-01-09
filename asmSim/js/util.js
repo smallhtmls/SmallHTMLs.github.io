@@ -20,19 +20,13 @@ export function getURIParams() {
 }
 export function setStyle(text_color, background_color, theme) {
     document.documentElement.style.setProperty("--text-color", text_color);
-    document.documentElement.style.setProperty(
-        "--background-color",
-        background_color
-    );
+    document.documentElement.style.setProperty("--background-color", background_color);
     monaco.editor.setTheme(theme);
 }
 export function download(filename, text) {
     //https://stackoverflow.com/questions/3665115/how-to-create-a-file-in-memory-for-user-to-download-but-not-through-server
     var element = document.createElement("a");
-    element.setAttribute(
-        "href",
-        "data:text/plain;charset=utf-8," + encodeURIComponent(text)
-    );
+    element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
     element.setAttribute("download", filename);
 
     element.style.display = "none";
@@ -51,7 +45,7 @@ export function setContextMenu(x, y, options) {
         const clb = options[o];
         let option = document.createElement("div");
         option.classList.add("contextMenuItem");
-        option.addEventListener(o[0] === "C" ? "click" : "mouseenter", (e) => {
+        option.addEventListener(o[0] === "C" ? "click" : "mouseenter", e => {
             clb(e, d);
         });
         option.innerText = o.substring(1);
@@ -101,4 +95,7 @@ export function printBin(stream, numb_i, padding = 0) {
 }
 export function exitsValueInObject(value, obj) {
     return Object.values(obj).includes(value);
+}
+export function getLangKey() {
+    return location.pathname.endsWith("/en/") ? "en" : "de";
 }

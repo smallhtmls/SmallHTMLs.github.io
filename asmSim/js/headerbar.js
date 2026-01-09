@@ -8,6 +8,7 @@ import {
     DARK_MODE_TOGGLE_E,
     MAIN_E,
     MENU_URL_BUTTON_E,
+    RANGE_CPU_SPEED_E,
 } from "./elements.js";
 import { OPTIONS } from "./options.js";
 import { setClassVisible, setContextMenu, setStyle } from "./util.js";
@@ -58,6 +59,10 @@ function updateBX(sp) {
     }
 }
 
+function updateCPUSpeed(speed_n) {
+    RANGE_CPU_SPEED_E.value = speed_n;
+}
+
 CHECKBOX_STACKPOINTER.onclick = () => {
     updateSP(CHECKBOX_STACKPOINTER.getAttribute("checked") !== "true");
 };
@@ -67,7 +72,17 @@ CHECKBOX_BASEPOINTER.onclick = () => {
 CHECKBOX_BX_REGISTER.onclick = () => {
     updateBX(CHECKBOX_BX_REGISTER.getAttribute("checked") !== "true");
 };
-
+let cpuSpeedUpdateCallback_f;
+RANGE_CPU_SPEED_E.onchange = () => {
+    const speed_n = parseInt(RANGE_CPU_SPEED_E.value);
+    OPTIONS.setCPUSpeed(speed_n);
+    if (cpuSpeedUpdateCallback_f) {
+        cpuSpeedUpdateCallback_f();
+    }
+};
+export function setCPUSpeedUpdateCallback(clb_f) {
+    cpuSpeedUpdateCallback_f = clb_f;
+}
 function closeContextMenu(e) {}
 
 export function postInitHeader() {
@@ -76,6 +91,7 @@ export function postInitHeader() {
     updateBP(OPTIONS.hasBP());
     updateBX(OPTIONS.hasBX());
     updateMobile(OPTIONS.getMobileMode());
+    updateCPUSpeed(OPTIONS.getCPUSpeed());
     ASSEMBLE_SELECT_E.value = OPTIONS.getLang();
     loadEditorType(OPTIONS.getLang());
 }
@@ -86,13 +102,13 @@ export function updateMobile(mobileMode) {
         CHECKBOX_MOBILE_MODE_E.setAttribute("checked", "true");
         if (MAIN_E.firstElementChild.id === "cpu") {
             const items = Array.from(MAIN_E.children);
-            items.reverse().forEach((item) => MAIN_E.appendChild(item));
+            items.reverse().forEach(item => MAIN_E.appendChild(item));
         }
     } else {
         CHECKBOX_MOBILE_MODE_E.setAttribute("checked", "false");
         if (MAIN_E.firstElementChild.id !== "cpu") {
             const items = Array.from(MAIN_E.children);
-            items.reverse().forEach((item) => MAIN_E.appendChild(item));
+            items.reverse().forEach(item => MAIN_E.appendChild(item));
         }
     }
 }

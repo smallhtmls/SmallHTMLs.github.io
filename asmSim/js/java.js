@@ -1,3 +1,8 @@
+export const JAVA_ASSEMBLE_BUTTON_TITLE_MLO = {
+    en: "Build (Ctrl+B)",
+    de: "Übersetzen (Strg+B)",
+};
+
 const TOKEN_START = 0x00;
 let iota = 1;
 const PARAM_CURLY_OPEN = iota++; // 1

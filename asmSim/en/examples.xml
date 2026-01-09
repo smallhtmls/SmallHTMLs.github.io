@@ -5,7 +5,7 @@
             <default>
                 <label>(0) Default</label>
                 <code>
-                    ; Dies ist ein Kommentar!
+                    ; This is a comment!
                     LOADI 7
                     ADDI 52
                     SUBI 5
@@ -21,55 +21,55 @@
             <add>
                 <label>(1.1) Addition 3+4</label>
                 <code>
-                    LOADI 3 ; Lädt die Zahl 3 in den Akkumulator
-                    ADDI 4 ; Addiert die 4 als Ganzzahl (int / immediate)
-                    HOLD ; Beendet das Program
+                    LOADI 3 ; Loads the Number 3 in the accumulator
+                    ADDI 4 ; adds the integer 4 (int / immediate) to the accumulator
+                    HOLD ; Stops the program / Holds the program
                 </code>
             </add>
             <variable>
-                <label>(1.2) Speicherzellen</label>
+                <label>(1.2) Memory Cells</label>
                 <code>
-                    LOADI 20 ; Lädt 20 in den Akkumulator
-                    STORE 100 ; Speichert den Akkumulator (20) in Speicherzelle [100]
-                    LOADI 321 ; Lädt 321 in den Akkumulator
-                    STORE 101 ; Speichert den Akkumulator (321) in Speicherzelle [101]
-                    LOADI 42 ; Lädt 42 in den Akkumulator
-                    STORE 102 ; Speichert den Akkumulator (42) in Speicherzelle [102]
+                    LOADI 20 ; Loads 20 into the accumulator
+                    STORE 100 ; Stores the accumulator (20) in the memory cell [100]
+                    LOADI 321 ; Stores 321 into the accumulator
+                    STORE 101 ; Stores the accumulator (321) in memory cell [101]
+                    LOADI 42 ; Loads 42 into the accumulator
+                    STORE 102 ; Stores the accumulator (42) in memory cell [102]
                     ;
-                    LOAD 102 ; Lädt die Zahl in der Speicherzelle [102] in den Akkumulator
-                    ADD 101 ; Addiert die Zahl in der Speicherzelle [101] mit dem Akkumulator
-                    ADDI 1 ; Addiert die Zahl 1
-                    STORE 99 ; Speichert den Akkumulator in Zelle [99]
+                    LOAD 102 ; Loads the value of the memory cell [102] into the accumulator
+                    ADD 101 ; Adds the value of the memory cell [101] to the accumulators value
+                    ADDI 1 ; Adds one to the accumulator
+                    STORE 99 ; Stores the resulting number in the memory cell [99]
                 </code>
             </variable>
             <formular>
-                <label>(1.3) Formel: 5*20 / 10 + 3 * 70</label>
+                <label>(1.3) Math-Formula: 5*20 / 10 + 3 * 70</label>
                 <code>
-                    ; Zuerst wird die Reihenfolge der Bearbeitung ermittelt:
+                    ; First the order of operation is determined:
                     ; ((5*20) / 10) + (3 * 70)
                     LOADI 3 ; Lädt 3 in den Akkumulator
                     MULI 70 ; Multipiziert mit der Zahl 70
-                    STORE 100 ; Das Ergebniss muss zwischengespeichert werden in Zelle [100]
+                    STORE 100 ; Das Ergebniss muss zwischengespeichert werden in Zelle 100
                     LOADI 5 ; Lädt 5 in den Akkumulator
                     MULI 20 ; Multipliziert mit der Zahl 20
                     DIVI 10 ; Dividiert durch die Zahl 10
-                    ADD 100 ; Addiert mit dem Wert der Speicherzelle [100]
+                    ADD 100 ; Addiert mit dem Wert der Speicherzelle 100
                     HOLD
                 </code>
             </formular>
             <static-vars>
-                <label>(1.4) Statische Variablen</label>
+                <label>(1.4) Static Variables</label>
                 <code>
-                    ; Speicherzellen fest zu addressieren wird unübersichtlich
-                    ; Darum kann (static) int a = 2; auch hier umgesetzt werden:
+                    ; Addressing memory cells by hand gets confusing after some time
+                    ; That's why (static) int a = 2 can be used here like this:
                     ;
                     a_i: WORD 2 ; a_i ist der Name; WORD steht hier für int; 2 ist der Anfangswert
                     LOADI 7 ; Lädt 7 in den Akkumulator
                     ADD a_i ; Addiert den Wert der Speicherzelle a_i (2)
                     MUL a_i ; Multipliziert mit dem Wert der Speicherzelle a_i (2)
                     HOLD
-                    
-                    ; Ergänzung: "STATIC" wird hier benutzt um es von komplexeren Speicheraddressierungsmodellen zu unterscheiden
+
+                    ; NOTE: "STATIC" is used here to differ from the more complex memory allocation models
                 </code>
             </static-vars>
             <goto>
@@ -77,20 +77,20 @@
                 <code>
                     LOADI 3 ; Addr. 0-1
                     ADDI 7 ; Addr. 2-3
-                    JMP 10 ; Jump - Sprint mit dem Program-Zähler (pc) zur Addresse [10]
-                    SUBI 10 ; Addr. 6-7 - Wird übersprungen
-                    MULI 100 ; Addr. 8-9 - Wird übersprungen
-                    DIVI 10 ; Addr. 10-11 - Wird ausgeführt
-                    JMP end ; Addressen Zählen ist umständlich, also setzt man Marker
-                    ADDI 41592 ; Wird übersprungen
-                    DIVI 100   ; Wird übersprungen
-                    MULI 3     ; Wird übersprungen
-                    end: ; Hier der Marker
+                    JMP 10 ; Jump - Jumps with the program-counter (pc) to address [10]
+                    SUBI 10 ; Addr. 6-7 - Is Skipped!
+                    MULI 100 ; Addr. 8-9 - Is Skipped!
+                    DIVI 10 ; Addr. 10-11
+                    JMP end ; Counting addresses is annoying, so we use labels/markers instead
+                    ADDI 41592 ; Is Skipped
+                    DIVI 100   ; Is Skipped
+                    MULI 3     ; Is Skipped
+                    end: ; This is a label / marker
                     HOLD
                 </code>
             </goto>
             <if-condition>
-                <label>(2.2) if-Bedingung
+                <label>(2.2) if-Condition
                 </label>
                 <code>
                     ; Code in Java:
@@ -98,13 +98,13 @@
                     a_i: WORD 5
                     LOAD a_i
                     CMPI 2
-                    ; Zieht vom Wert des Akkumulators die Zahl 2 ab
-                    ; Das Ergebnis wird nur in den Flags gespeichert
-                    ; Wenn es negativ ist → Setze N Flag
-                    ; Wenn es 0 ist (zero) → Setze Z Flag
+                    ; Subtracts the number 2 from the accumulator
+                    ; The result is only stored in flags
+                    ; If the result is negative → set N Flag
+                    ; if the reuslt is zero → set Z Flag
                     JNE if_end
-                    ; Sprint, wenn die Werte bei CMP / CMPI nicht gleich waren
-                    ; Entspricht, Sprint wenn der Zero-Flag nicht gesetzt ist
+                    ; Jumps if the values compared in the last CMPI / CMP instruction are not equal
+                    ; So, jumps if the Z-Flag is not set
                     ADDI 2
                     if_end:
                     STORE a_i
@@ -112,7 +112,7 @@
                 </code>
             </if-condition>
             <while-loop>
-                <label>(2.3) while-Schleife</label>
+                <label>(2.3) while-loop</label>
                 <code>
                     ; Code in Java:
                     ; int b = 0; int a = 15; while(a > 5) {a--;b++;}
@@ -132,11 +132,11 @@
                     while1_end:
                     HOLD
 
-                    ;Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber (fast) gleich für den Prozessor
+                    ; NOTE: for and while loops were introduced to make code more readable but don't differ for the CPU
                 </code>
             </while-loop>
             <for-loop>
-                <label>(2.4) for-Schleife</label>
+                <label>(2.4) for-loop</label>
                 <code>
                     ; Code in Java:
                     ; int b = 0; int a = 15; while(a > 5) {a--;b++;}
@@ -156,11 +156,11 @@
                     while1_end:
                     HOLD
 
-                    ;Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber (fast) gleich für den Prozessor
+                    ; NOTE: for and while loops were introduced to make code more readable but don't differ for the CPU
                 </code>
             </for-loop>
             <example-power>
-                <label>(2.5) Multiplizieren mit Loop</label>
+                <label>(2.5) Multiplication with loop</label>
                 <code>
                     multip1_i: WORD 0
                     multip2_i: WORD 15
@@ -181,27 +181,27 @@
                 </code>
             </example-power>
             <example-parser>
-                <label>(2.6) Encodigung lösen</label>
+                <label>(2.6) Solving encodings</label>
                 <code>
-                    hexcode_i: WORD 10 ; Hex encodierte Zahl (zur Basis 16)
-                    basis_i: WORD 16 ; Zahl zur Basis
-                    factor_i: WORD 1 ; Faktor für die Stelle
-                    ret_i: WORD 0 ; Rückgabewert (return)
+                    hexcode_i: WORD 10 ; Hex coded number (with base 16)
+                    basis_i: WORD 16 ; Number with base
+                    factor_i: WORD 1 ; factor multiplied with the current digit
+                    ret_i: WORD 0 ; return value
 
                     start:
-                    ; solange Stellen übrig sind
+                    ; as long as there are is a digit left
                     LOAD hexcode_i
                     CMPI 0
                     JLE end
-                    MODI 10 ; Nur die letzte Stelle in den Akkumulator
-                    MUL factor_i ; Multipliziere mit dem Faktor
-                    ADD ret_i ; Füge es dem Ergebnis hinzu
+                    MODI 10 ; Only the last digit of the number
+                    MUL factor_i ; multiply with the current factor
+                    ADD ret_i ; Add it to the current result
                     STORE ret_i
-                    ; Erhöhe dem Faktor für die nächste Stelle
+                    ; Multiply to the factor the basis
                     LOAD factor_i
                     MUL basis_i
                     STORE factor_i
-                    ; Entferne die letzte Stelle des Codes
+                    ; Remove the last digit of the code
                     LOAD hexcode_i
                     DIVI 10
                     STORE hexcode_i
@@ -212,9 +212,9 @@
                 </code>
             </example-parser>
             <stack-usage>
-                <label>(3.0) Stack (Stapelspeicher)</label>
+                <label>(3.0) Stack</label>
                 <code>
-                    ; Bitte hierzu den Stack-Pointer aktivieren
+                    ; Please activate the stack-pointer for this!
                     LOADI 7
                     PUSH
                     LOADI 2
@@ -231,18 +231,18 @@
                 </code>
             </stack-usage>
             <second-register>
-                <label>(3.1) Zweites Register</label>
+                <label>(3.1) Second register</label>
                 <code>
-                    ; Bitte hierzu das Register BX aktivieren
-                    LOADBI 20 ; Lädt 20 in das BX Register
-                    LOADI 5 ; Lädt 5 in den Akkumulator
-                    ADDI 5 ; Addiert 5 auf dem Akkumulator
-                    XCHG ; Tauscht die Werte des Akkumulators und BX
-                    STOREB 100 ; Speichert den Wert von BX in Speicherzelle [100]
+                    ; Please activate the BX-Register
+                    LOADBI 20 ; Loads 20 into the BX-Register
+                    LOADI 5 ; Loads 5 into the accumulator
+                    ADDI 5 ; Adds 5 to the accumulator
+                    XCHG ; Switches the two registers accumulator and bx
+                    STOREB 100 ; Store the value of bx in the memory cell [100]
                 </code>
             </second-register>
             <pow-function>
-                <label>(3.2) Funktionsaufruf</label>
+                <label>(3.2) Function Call</label>
                 <code>
                     LOADI 4
                     LOADBI 2
