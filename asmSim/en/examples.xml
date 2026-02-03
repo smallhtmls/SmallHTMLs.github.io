@@ -69,7 +69,8 @@
                     MUL a_i ; Multipliziert mit dem Wert der Speicherzelle a_i (2)
                     HOLD
 
-                    ; NOTE: "STATIC" is used here to differ from the more complex memory allocation models
+                    ; NOTE: "STATIC" is used here to differ from the more complex memory allocation
+                    ; models
                 </code>
             </static-vars>
             <goto>
@@ -82,9 +83,9 @@
                     MULI 100 ; Addr. 8-9 - Is Skipped!
                     DIVI 10 ; Addr. 10-11
                     JMP end ; Counting addresses is annoying, so we use labels/markers instead
-                    ADDI 41592 ; Is Skipped
-                    DIVI 100   ; Is Skipped
-                    MULI 3     ; Is Skipped
+                    ADDI 11592 ; Is Skipped
+                    DIVI 100 ; Is Skipped
+                    MULI 3 ; Is Skipped
                     end: ; This is a label / marker
                     HOLD
                 </code>
@@ -132,7 +133,8 @@
                     while1_end:
                     HOLD
 
-                    ; NOTE: for and while loops were introduced to make code more readable but don't differ for the CPU
+                    ; NOTE: for and while loops were introduced to make code more readable but don't
+                    ; differ for the CPU
                 </code>
             </while-loop>
             <for-loop>
@@ -156,7 +158,8 @@
                     while1_end:
                     HOLD
 
-                    ; NOTE: for and while loops were introduced to make code more readable but don't differ for the CPU
+                    ; NOTE: for and while loops were introduced to make code more readable but don't
+                    ; differ for the CPU
                 </code>
             </for-loop>
             <example-power>

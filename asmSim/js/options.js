@@ -4,6 +4,7 @@ import { encodeUnit, decodeUnit } from "./util.js";
 export class Options {
     static default = {
         darkMode: "false",
+        warn: "true",
         lang: "mini-asm",
         memSize: "5k",
         regs: "",
@@ -64,6 +65,10 @@ export class Options {
     }
     setBX(has) {
         this._setReg("bx", has);
+    }
+    setWarn(has) {}
+    getWarn() {
+        return this.warn === "true";
     }
     getCPUSpeed() {
         return parseInt(this.cpuSpeed);

@@ -23,11 +23,20 @@ import {
     CHECKBOX_STACKPOINTER,
     MESSAGE_BOX_E,
 } from "./elements.js";
-import { MINIMASHINE_ASM_DECODE_TABLE_S, CODE_DESCRIPTION_S, MINIASM_ASSEMBLE_BUTTON_TITLE_MLO } from "./miniasm.js";
-import { editor } from "./editor.js";
+import {
+    MINIMASHINE_ASM_DECODE_TABLE_S,
+    CODE_DESCRIPTION_S,
+    MINIASM_ASSEMBLE_BUTTON_TITLE_MLO,
+} from "./miniasm.js";
+import { editor, setEditorLang } from "./editor.js";
 import { OPTIONS } from "./options.js";
 import { postInitHeader } from "./headerbar.js";
-import { download, exitsValueInObject, getLangKey, setClassVisible } from "./util.js";
+import {
+    download,
+    exitsValueInObject,
+    getLangKey,
+    setClassVisible,
+} from "./util.js";
 import { JAVA_ASSEMBLE_BUTTON_TITLE_MLO } from "./java.js";
 const SVG_NS = "http://www.w3.org/2000/svg";
 const FAC_LOG2_10 = Math.log(2) / Math.log(10);
@@ -54,7 +63,9 @@ export function int16StringToBigint(str) {
 }
 
 export function setDataBus(padding_i, nmb_i) {
-    let zeros_s = BigInt.asUintN(16, nmb_i).toString(2).padStart(Number(padding_i), "0");
+    let zeros_s = BigInt.asUintN(16, nmb_i)
+        .toString(2)
+        .padStart(Number(padding_i), "0");
 
     zeros_s = zeros_s.match(/.{1,8}/g).join(" ");
     zeros_s = zeros_s.split(" ");
@@ -98,14 +109,22 @@ export function setStackPointer(accu_i) {
     STACK_POINTER_E.innerHTML = getStringInt16(accu_i);
 }
 export function setInstructionDisplay(id_i__name_s) {
-    INSTRUCTION_ID_E.innerHTML = id_i__name_s.constructor.name == "BigInt" ? getStringInt16(id_i__name_s) : id_i__name_s;
+    INSTRUCTION_ID_E.innerHTML =
+        id_i__name_s.constructor.name == "BigInt"
+            ? getStringInt16(id_i__name_s)
+            : id_i__name_s;
 }
 export function setInstructionData(data_i) {
     INSTRUCTION_DATA_E.innerHTML = getStringInt16(data_i);
 }
 let lastRamTable;
 let ntoDisplay_n;
-export function renderRamTable(renderMode = 8n, ramsize = 5000n, getCell_f, writeIfAllowed_f) {
+export function renderRamTable(
+    renderMode = 8n,
+    ramsize = 5000n,
+    getCell_f,
+    writeIfAllowed_f,
+) {
     const chess_count = ramsize / (renderMode / 8n);
     ntoDisplay_n = Math.ceil(FAC_LOG2_10 * Number(renderMode));
     const table_e = document.createElement("table");
@@ -123,7 +142,7 @@ export function renderRamTable(renderMode = 8n, ramsize = 5000n, getCell_f, writ
             table_e.lastElementChild.appendChild(td_e);
         }
         const obj_e = document.createElement("td");
-        obj_e.onclick = e => {
+        obj_e.onclick = (e) => {
             let str = prompt("Enter new Value!");
             if (!str) return;
             let int_i = int16StringToBigint(str);
@@ -143,7 +162,16 @@ export function renderRamTable(renderMode = 8n, ramsize = 5000n, getCell_f, writ
 }
 export function updateMem() {
     let a = BIT_MODE_SELECTOR_E.value;
-    let val = a == "8" ? BIT_MODE_8 : a == "16" ? BIT_MODE_16 : a === "32" ? BIT_MODE_32 : a == "64" ? BIT_MODE_64 : BIT_MODE_8;
+    let val =
+        a == "8"
+            ? BIT_MODE_8
+            : a == "16"
+              ? BIT_MODE_16
+              : a === "32"
+                ? BIT_MODE_32
+                : a == "64"
+                  ? BIT_MODE_64
+                  : BIT_MODE_8;
     Memory.setBitMode(val);
 }
 export function blinkAssemble() {
@@ -158,13 +186,24 @@ export function updateRamRender(objects, source) {
     if (!lastRamTable) return;
     for (let q in objects) {
         const id = Number(q);
-        const element_e = lastRamTable.children[Math.floor(id / 10) + 1].children[(id % 10) + 1];
+        const element_e =
+            lastRamTable.children[Math.floor(id / 10) + 1].children[
+                (id % 10) + 1
+            ];
         element_e.innerText = getStringInt16(objects[q]); //.padStart(ntoDisplay_n, "0");
         element_e.classList.add(source == 0 ? "userChanged" : "processChanged");
     }
 }
 export function updateStatusRegister(zero_b, n_b, v_b, c_b) {
-    STATUS_REGISTER_E.innerHTML = "Z:" + (zero_b ? "I" : "0") + " N:" + (n_b ? "I" : "0") + " V:" + (v_b ? "I" : "0") + " C:" + (c_b ? "I" : "0");
+    STATUS_REGISTER_E.innerHTML =
+        "Z:" +
+        (zero_b ? "I" : "0") +
+        " N:" +
+        (n_b ? "I" : "0") +
+        " V:" +
+        (v_b ? "I" : "0") +
+        " C:" +
+        (c_b ? "I" : "0");
 }
 
 function getDTNow() {
@@ -191,7 +230,11 @@ for (let key_s in MINIMASHINE_ASM_DECODE_TABLE_S) {
     const val_e = document.createElement("td");
     const desc_e = document.createElement("td");
     key_e.innerText = val;
-    val_e.innerText = "0x" + key_i.toString(16).padStart(4, "0") + " | " + getStringInt16(key_i);
+    val_e.innerText =
+        "0x" +
+        key_i.toString(16).padStart(4, "0") +
+        " | " +
+        getStringInt16(key_i);
     desc_e.innerText = desc_s ? desc_s : "";
     line_e.appendChild(key_e);
     line_e.appendChild(val_e);
@@ -199,7 +242,7 @@ for (let key_s in MINIMASHINE_ASM_DECODE_TABLE_S) {
     STRUC_TABLE_BODY_E.appendChild(line_e);
 }
 
-Array.from(document.getElementsByClassName("fscButton")).forEach(e => {
+Array.from(document.getElementsByClassName("fscButton")).forEach((e) => {
     e.onclick = () => {
         if (document.fullscreenElement == null) {
             e.parentElement.requestFullscreen();
@@ -226,7 +269,8 @@ function loadCode(example, langType) {
     let code = examples[langType][example].code;
     code = fixXMLIndent(code);
     editor.setValue(code);
-    monaco.editor.setModelLanguage(editor.getModel(), langType);
+    setEditorLang(langType);
+
     switch (langType) {
         case "java":
             ASM_PREVIEW_E.classList.remove("hidden");
@@ -240,10 +284,12 @@ export function loadEditorType(val) {
     LOAD_EXAMPLE_E.innerHTML = "";
     switch (val) {
         case "mini-asm":
-            ASSEMBLE_BUTTON_E.innerText = MINIASM_ASSEMBLE_BUTTON_TITLE_MLO[getLangKey()];
+            ASSEMBLE_BUTTON_E.innerText =
+                MINIASM_ASSEMBLE_BUTTON_TITLE_MLO[getLangKey()];
             break;
         case "java":
-            ASSEMBLE_BUTTON_E.innerText = JAVA_ASSEMBLE_BUTTON_TITLE_MLO[getLangKey()];
+            ASSEMBLE_BUTTON_E.innerText =
+                JAVA_ASSEMBLE_BUTTON_TITLE_MLO[getLangKey()];
     }
 
     if (t) {
@@ -283,11 +329,11 @@ export async function initDisplay() {
     setClassVisible("bxRegister", OPTIONS.hasBX());
     postInitHeader();
 }
-ASSEMBLE_SELECT_E.onchange = e => {
+ASSEMBLE_SELECT_E.onchange = (e) => {
     OPTIONS.setLang(ASSEMBLE_SELECT_E.value);
     loadEditorType(ASSEMBLE_SELECT_E.value);
 };
-LOAD_EXAMPLE_E.onchange = e => {
+LOAD_EXAMPLE_E.onchange = (e) => {
     loadCode(LOAD_EXAMPLE_E.value, ASSEMBLE_SELECT_E.value);
 };
 export const MESSAGE_BOX_STATUS = {
