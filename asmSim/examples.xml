@@ -68,8 +68,9 @@
                     ADD a_i ; Addiert den Wert der Speicherzelle a_i (2)
                     MUL a_i ; Multipliziert mit dem Wert der Speicherzelle a_i (2)
                     HOLD
-                    
-                    ; Ergänzung: "STATIC" wird hier benutzt um es von komplexeren Speicheraddressierungsmodellen zu unterscheiden
+
+                    ; Ergänzung: "STATIC" wird hier benutzt um es von komplexeren
+                    ; Speicheraddressierungsmodellen zu unterscheiden
                 </code>
             </static-vars>
             <goto>
@@ -82,9 +83,9 @@
                     MULI 100 ; Addr. 8-9 - Wird übersprungen
                     DIVI 10 ; Addr. 10-11 - Wird ausgeführt
                     JMP end ; Addressen Zählen ist umständlich, also setzt man Marker
-                    ADDI 41592 ; Wird übersprungen
-                    DIVI 100   ; Wird übersprungen
-                    MULI 3     ; Wird übersprungen
+                    ADDI 11592 ; Wird übersprungen
+                    DIVI 100 ; Wird übersprungen
+                    MULI 3 ; Wird übersprungen
                     end: ; Hier der Marker
                     HOLD
                 </code>
@@ -132,7 +133,8 @@
                     while1_end:
                     HOLD
 
-                    ;Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber (fast) gleich für den Prozessor
+                    ;Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber
+                    ; (fast) gleich für den Prozessor
                 </code>
             </while-loop>
             <for-loop>
@@ -156,7 +158,8 @@
                     while1_end:
                     HOLD
 
-                    ;Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber (fast) gleich für den Prozessor
+                    ;Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber
+                    ; (fast) gleich für den Prozessor
                 </code>
             </for-loop>
             <example-power>

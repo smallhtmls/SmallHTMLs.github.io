@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -15,16 +15,38 @@
             <button class="menuBarItem" id="menuUrlOptions">URL-Option</button>-->
         </div>
         <div id="header">
-            <a class="headerItem" id="backButton" href="https://smallhtmls.github.io">🠜</a>
+            <a
+                class="headerItem"
+                id="backButton"
+                href="https://smallhtmls.github.io"
+                >🠜</a
+            >
             <div id="settingsA">
-                <label for="stackPointerCheckbox">Stack-Pointer:</label><sasm-checkbox id="stackPointerCheckbox"></sasm-checkbox
-                ><label for="basePointerCheckbox">Base-Pointer:</label><sasm-checkbox id="basePointerCheckbox"></sasm-checkbox> <label for="bxRegisterCheckbox">BX Register:</label
-                ><sasm-checkbox id="bxRegisterCheckbox"></sasm-checkbox> <label for="mobileModeCheckbox">Mobile-Mode:</label
-                ><sasm-checkbox id="mobileModeCheckbox"></sasm-checkbox> <label>CPU-Speed:</label><input id="cpuSpeedInput" min="1" max="2001" step="250" type="range" />
+                <label for="stackPointerCheckbox">Stack-Pointer:</label
+                ><sasm-checkbox id="stackPointerCheckbox"></sasm-checkbox
+                ><label for="basePointerCheckbox">Base-Pointer:</label
+                ><sasm-checkbox id="basePointerCheckbox"></sasm-checkbox>
+                <label for="bxRegisterCheckbox">BX Register:</label
+                ><sasm-checkbox id="bxRegisterCheckbox"></sasm-checkbox>
+                <label for="mobileModeCheckbox">Mobile-Mode:</label
+                ><sasm-checkbox id="mobileModeCheckbox"></sasm-checkbox>
+                <label>CPU-Speed:</label
+                ><input
+                    id="cpuSpeedInput"
+                    min="1"
+                    max="2001"
+                    step="250"
+                    type="range"
+                />
             </div>
             <a class="headerItem" id="langLink" href="../">Deutsch</a>
-            <div class="headerItem" id="darkmodeContainer"><label for="#darkmodeToggle">Darkmode:</label> <sasm-checkbox id="darkmodeToggle"></sasm-checkbox></div>
-            <div id="version">Version: <span style="color: red">Beta</span> 0.0.3</div>
+            <div class="headerItem" id="darkmodeContainer">
+                <label for="#darkmodeToggle">Darkmode:</label>
+                <sasm-checkbox id="darkmodeToggle"></sasm-checkbox>
+            </div>
+            <div id="version">
+                Version: <span style="color: red">Beta</span> 0.0.5
+            </div>
         </div>
         <main>
             <div id="cpu">
@@ -32,14 +54,38 @@
                 <svg viewbox="0 0 800 470" id="cpuImg">
                     <defs>
                         <!-- A marker to be used as an arrowhead -->
-                        <marker class="defaultLine defaultFill" id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <marker
+                            class="defaultLine defaultFill"
+                            id="arrow"
+                            viewBox="0 0 10 10"
+                            refX="5"
+                            refY="5"
+                            markerWidth="6"
+                            markerHeight="6"
+                            orient="auto-start-reverse"
+                        >
                             <path d="M 0 0 L 10 5 L 0 10 z" />
                         </marker>
                     </defs>
                     <g id="accumulator" transform="translate(170 160)">
-                        <text class="svgText" id="accumulatorTitle" x="3" y="15">Accumulator</text>
-                        <text class="svgText" id="accumulatorText" x="8" y="47">0</text>
-                        <rect x="0" y="30" width="200" height="30" fill="rgba(0,128,255,0.5)"></rect>
+                        <text
+                            class="svgText"
+                            id="accumulatorTitle"
+                            x="3"
+                            y="15"
+                        >
+                            Accumulator
+                        </text>
+                        <text class="svgText" id="accumulatorText" x="8" y="47">
+                            0
+                        </text>
+                        <rect
+                            x="0"
+                            y="30"
+                            width="200"
+                            height="30"
+                            fill="rgba(0,128,255,0.5)"
+                        ></rect>
                     </g>
                     <g id="alu" transform="translate(350 250)">
                         <line x1="0" x2="20" y1="0" y2="0" class="stdLine" />
@@ -52,79 +98,377 @@
                         <text class="svgText" x="-30" y="80">ALU</text>
                     </g>
                     <!--MAIN RECTS - CPU-->
-                    <rect x="10" y="10" width="450" height="450" stroke="red" fill="transparent"></rect>
+                    <rect
+                        x="10"
+                        y="10"
+                        width="450"
+                        height="450"
+                        stroke="red"
+                        fill="transparent"
+                    ></rect>
                     <!--MAIN RECTS - RAM-->
-                    <rect x="700" y="10" width="450" height="450" stroke="red" fill="transparent"></rect>
+                    <rect
+                        x="700"
+                        y="10"
+                        width="450"
+                        height="450"
+                        stroke="red"
+                        fill="transparent"
+                    ></rect>
                     <!--Control System-->
                     <g id="controlSystem" transform="translate(150 25)">
-                        <rect x="0" y="0" width="300" height="130" stroke="blue" class="stdRect" />
-                        <rect x="5" y="5" width="50" height="50" stroke="green" class="stdRect" />
-                        <text x="10" y="45" class="controlButtonSymbol svgText" onclick="Processor.run();">⥁</text>
-                        <text x="10" y="65" class="controlButtonSymbol svgText hint" onclick="Processor.run();">Strg+R</text>
-                        <rect x="70" y="5" width="50" height="50" stroke="green" class="stdRect" />
-                        <text x="75" y="45" class="controlButtonSymbol svgText" onclick="Processor.step();">⟳</text>
-                        <text x="75" y="65" class="controlButtonSymbol svgText hint" onclick="Processor.step();">Strg+M</text>
-                        <rect x="135" y="5" width="50" height="50" stroke="green" class="stdRect"></rect>
-                        <text x="150" y="45" class="controlButtonSymbol svgText" onclick="Processor.smallStep();">⤸</text>
-                        <text x="150" y="65" class="controlButtonSymbol svgText hint" onclick="Processor.smallStep();">Strg+Q</text>
-                        <rect x="200" y="5" width="50" height="50" stroke="green" class="stdRect" onclick="Processor.clear();"></rect>
-                        <text x="212" y="65" class="controlButtonSymbol svgText hint" onclick="Processor.step();">Strg+Y</text>
-                        <rect x="210" y="15" width="30" height="30" class="controlButtonSymbol svgText" onclick="Processor.clear();"></rect>
+                        <rect
+                            x="0"
+                            y="0"
+                            width="300"
+                            height="130"
+                            stroke="blue"
+                            class="stdRect"
+                        />
+                        <rect
+                            x="5"
+                            y="5"
+                            width="50"
+                            height="50"
+                            stroke="green"
+                            class="stdRect"
+                        />
+                        <text
+                            x="10"
+                            y="45"
+                            class="controlButtonSymbol svgText"
+                            onclick="Processor.run()"
+                        >
+                            ⥁
+                        </text>
+                        <text
+                            x="10"
+                            y="65"
+                            class="controlButtonSymbol svgText hint"
+                            onclick="Processor.run()"
+                        >
+                            Strg+R
+                        </text>
+                        <rect
+                            x="70"
+                            y="5"
+                            width="50"
+                            height="50"
+                            stroke="green"
+                            class="stdRect"
+                        />
+                        <text
+                            x="75"
+                            y="45"
+                            class="controlButtonSymbol svgText"
+                            onclick="Processor.step()"
+                        >
+                            ⟳
+                        </text>
+                        <text
+                            x="75"
+                            y="65"
+                            class="controlButtonSymbol svgText hint"
+                            onclick="Processor.step()"
+                        >
+                            Strg+M
+                        </text>
+                        <rect
+                            x="135"
+                            y="5"
+                            width="50"
+                            height="50"
+                            stroke="green"
+                            class="stdRect"
+                        ></rect>
+                        <text
+                            x="150"
+                            y="45"
+                            class="controlButtonSymbol svgText"
+                            onclick="Processor.smallStep()"
+                        >
+                            ⤸
+                        </text>
+                        <text
+                            x="150"
+                            y="65"
+                            class="controlButtonSymbol svgText hint"
+                            onclick="Processor.smallStep()"
+                        >
+                            Strg+Q
+                        </text>
+                        <rect
+                            x="200"
+                            y="5"
+                            width="50"
+                            height="50"
+                            stroke="green"
+                            class="stdRect"
+                            onclick="Processor.clear()"
+                        ></rect>
+                        <text
+                            x="212"
+                            y="65"
+                            class="controlButtonSymbol svgText hint"
+                            onclick="Processor.step()"
+                        >
+                            Strg+Y
+                        </text>
+                        <rect
+                            x="210"
+                            y="15"
+                            width="30"
+                            height="30"
+                            class="controlButtonSymbol svgText"
+                            onclick="Processor.clear()"
+                        ></rect>
                         <text class="svgText" x="10" y="83">Instruction:</text>
-                        <rect x="10" y="90" width="75" height="30" class="stdRect blackRect"></rect>
-                        <rect x="85" y="90" width="200" height="30" class="stdRect blackRect"></rect>
-                        <text class="svgtext" id="instructionId" x="12" y="110"></text>
-                        <text class="svgtext" id="instructionData" x="90" y="110"></text>
+                        <rect
+                            x="10"
+                            y="90"
+                            width="75"
+                            height="30"
+                            class="stdRect blackRect"
+                        ></rect>
+                        <rect
+                            x="85"
+                            y="90"
+                            width="200"
+                            height="30"
+                            class="stdRect blackRect"
+                        ></rect>
+                        <text
+                            class="svgtext"
+                            id="instructionId"
+                            x="12"
+                            y="110"
+                        ></text>
+                        <text
+                            class="svgtext"
+                            id="instructionData"
+                            x="90"
+                            y="110"
+                        ></text>
                     </g>
                     <!---->
 
-                    <text class="svgText busName" x="530" y="50">Control Bus</text>
-                    <text class="svgText" x="500" y="90" id="controlBusState"></text>
-                    <line x1="470" y1="100" x2="690" y2="100" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="green"></line>
-                    <text class="svgText busName" x="530" y="150">Address Bus</text>
-                    <text class="svgText" x="500" y="180" id="addressBusState"></text>
-                    <line x1="470" y1="200" x2="690" y2="200" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="red"></line>
-                    <text class="svgText busName" x="530" y="300">Data Bus</text>
+                    <text class="svgText busName" x="530" y="50">
+                        Control Bus
+                    </text>
+                    <text
+                        class="svgText"
+                        x="500"
+                        y="90"
+                        id="controlBusState"
+                    ></text>
+                    <line
+                        x1="470"
+                        y1="100"
+                        x2="690"
+                        y2="100"
+                        marker-end="url(#arrow)"
+                        marker-start="url(#arrow)"
+                        stroke="green"
+                    ></line>
+                    <text class="svgText busName" x="530" y="150">
+                        Address Bus
+                    </text>
+                    <text
+                        class="svgText"
+                        x="500"
+                        y="180"
+                        id="addressBusState"
+                    ></text>
+                    <line
+                        x1="470"
+                        y1="200"
+                        x2="690"
+                        y2="200"
+                        marker-end="url(#arrow)"
+                        marker-start="url(#arrow)"
+                        stroke="red"
+                    ></line>
+                    <text class="svgText busName" x="530" y="300">
+                        Data Bus
+                    </text>
 
                     <!---->
                     <text class="svgText" x="20" y="30">Program</text>
                     <text class="svgText" x="20" y="50">Counter:</text>
-                    <rect x="15" y="60" width="130" height="30" fill="transparent" stroke="red"></rect>
-                    <text class="svgText" x="20" y="80" id="programCounter">0</text>
+                    <rect
+                        x="15"
+                        y="60"
+                        width="130"
+                        height="30"
+                        fill="transparent"
+                        stroke="red"
+                    ></rect>
+                    <text class="svgText" x="20" y="80" id="programCounter">
+                        0
+                    </text>
 
-                    <text class="svgText stackp" x="20" y="160">Stack-Pointer:</text>
-                    <rect class="stackp" x="15" y="170" width="150" height="30" fill="transparent" stroke="yellow"></rect>
-                    <text class="svgText stackp" x="20" y="190" id="stackPointer">0</text>
+                    <text class="svgText stackp" x="20" y="160">
+                        Stack-Pointer:
+                    </text>
+                    <rect
+                        class="stackp"
+                        x="15"
+                        y="170"
+                        width="150"
+                        height="30"
+                        fill="transparent"
+                        stroke="yellow"
+                    ></rect>
+                    <text
+                        class="svgText stackp"
+                        x="20"
+                        y="190"
+                        id="stackPointer"
+                    >
+                        0
+                    </text>
 
-                    <text class="svgText stackbasep" x="20" y="220">Stack-Base-Pointer:</text>
-                    <rect x="15" y="230" class="stackbasep" width="150" height="30" fill="transparent" stroke="yellow"></rect>
-                    <text class="svgText stackbasep" x="20" y="250" id="stackBasePointer">0</text>
+                    <text class="svgText stackbasep" x="20" y="220">
+                        Stack-Base-Pointer:
+                    </text>
+                    <rect
+                        x="15"
+                        y="230"
+                        class="stackbasep"
+                        width="150"
+                        height="30"
+                        fill="transparent"
+                        stroke="yellow"
+                    ></rect>
+                    <text
+                        class="svgText stackbasep"
+                        x="20"
+                        y="250"
+                        id="stackBasePointer"
+                    >
+                        0
+                    </text>
 
-                    <text class="svgText bxRegister" x="20" y="277">BX-Register:</text>
-                    <rect x="15" y="285" class="bxRegister" width="150" height="30" fill="transparent" stroke="yellow"></rect>
-                    <text class="svgText bxRegister" x="20" y="305" id="bxRegisterText">0</text>
+                    <text class="svgText bxRegister" x="20" y="277">
+                        BX-Register:
+                    </text>
+                    <rect
+                        x="15"
+                        y="285"
+                        class="bxRegister"
+                        width="150"
+                        height="30"
+                        fill="transparent"
+                        stroke="yellow"
+                    ></rect>
+                    <text
+                        class="svgText bxRegister"
+                        x="20"
+                        y="305"
+                        id="bxRegisterText"
+                    >
+                        0
+                    </text>
 
-                    <path d="M 120 100 l 0 20 l 20 0" marker-start="url(#arrow)" marker-end="url(#arrow)" stroke="cyan" stroke-width="3px" fill="transparent" />
+                    <path
+                        d="M 120 100 l 0 20 l 20 0"
+                        marker-start="url(#arrow)"
+                        marker-end="url(#arrow)"
+                        stroke="cyan"
+                        stroke-width="3px"
+                        fill="transparent"
+                    />
                     <text class="svgText" x="480" y="305">
                         <tspan x="480" dy="15px" class="dataBusNumber"></tspan>
                         <tspan x="480" dy="15px" class="dataBusNumber"></tspan>
                     </text>
-                    <text class="svgText" x="490" y="380" id="dataBusBit"></text>
+                    <text
+                        class="svgText"
+                        x="490"
+                        y="380"
+                        id="dataBusBit"
+                    ></text>
                     <!--ALU - DATA BUS-->
-                    <path d="M 470 355 l -30 0 l 0 -130 l -30 0 l 0 20" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
-                    <path d="M 470 355 l -30 0 l 0 -190" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path
+                        d="M 470 355 l -30 0 l 0 -130 l -30 0 l 0 20"
+                        marker-end="url(#arrow)"
+                        stroke="blue"
+                        fill="transparent"
+                        stroke-width="3px"
+                    />
+                    <path
+                        d="M 470 355 l -30 0 l 0 -190"
+                        marker-end="url(#arrow)"
+                        stroke="blue"
+                        fill="transparent"
+                        stroke-width="3px"
+                    />
                     <!--AX - DATA BUS-->
-                    <path d="M 470 355 l -30 0 l -190 0 l 0 -125" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
-                    <path d="M 470 355 l -30 0 l -165 0 l 0 -125" stroke="blue" fill="transparent" stroke-width="3px" />
-                    <path d="M 275 230 l 0 1" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path
+                        d="M 470 355 l -30 0 l -190 0 l 0 -125"
+                        marker-end="url(#arrow)"
+                        stroke="blue"
+                        fill="transparent"
+                        stroke-width="3px"
+                    />
+                    <path
+                        d="M 470 355 l -30 0 l -165 0 l 0 -125"
+                        stroke="blue"
+                        fill="transparent"
+                        stroke-width="3px"
+                    />
+                    <path
+                        d="M 275 230 l 0 1"
+                        marker-end="url(#arrow)"
+                        stroke="blue"
+                        fill="transparent"
+                        stroke-width="3px"
+                    />
                     <!--ALU-AX-->
-                    <path d="M 380 320 l 0 25 l -70 0 l 0 -115" marker-end="url(#arrow)" stroke="gold" fill="transparent" stroke-width="3px" />
-                    <path d="M 390 320 l 0 95" marker-end="url(#arrow)" stroke="gold" fill="transparent" stroke-width="3px" />
-                    <path d="M 360 220 l 0 25" marker-end="url(#arrow)" stroke="blue" fill="transparent" stroke-width="3px" />
+                    <path
+                        d="M 380 320 l 0 25 l -70 0 l 0 -115"
+                        marker-end="url(#arrow)"
+                        stroke="gold"
+                        fill="transparent"
+                        stroke-width="3px"
+                    />
+                    <path
+                        d="M 390 320 l 0 95"
+                        marker-end="url(#arrow)"
+                        stroke="gold"
+                        fill="transparent"
+                        stroke-width="3px"
+                    />
+                    <path
+                        d="M 360 220 l 0 25"
+                        marker-end="url(#arrow)"
+                        stroke="blue"
+                        fill="transparent"
+                        stroke-width="3px"
+                    />
                     <!--Status Register-->
-                    <rect class="blackRect" x="280" y="420" width="170" height="30" fill="transparent" stroke="black" />
-                    <text class="svgText" x="300" y="437" id="statusRegister">Z:0 N:0 V:0 C:0</text>
-                    <line x1="480" y1="355" x2="680" y2="355" stroke-width="5" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="blue" />
+                    <rect
+                        class="blackRect"
+                        x="280"
+                        y="420"
+                        width="170"
+                        height="30"
+                        fill="transparent"
+                        stroke="black"
+                    />
+                    <text class="svgText" x="300" y="437" id="statusRegister">
+                        Z:0 N:0 V:0 C:0
+                    </text>
+                    <line
+                        x1="480"
+                        y1="355"
+                        x2="680"
+                        y2="355"
+                        stroke-width="5"
+                        marker-end="url(#arrow)"
+                        marker-start="url(#arrow)"
+                        stroke="blue"
+                    />
                 </svg>
                 <div id="cpuMessageBox" data-status="none">Error: Nobody</div>
             </div>
@@ -135,7 +479,12 @@
                 <select class="button" id="assembleSelect">
                     <option value="mini-asm" id="">mini-asm</option>
                     <!--  <option value="java">java</option>--></select
-                ><input id="openFile" type="file" /><button class="button" id="saveFile">Save</button>
+                ><input id="openFile" type="file" /><button
+                    class="button"
+                    id="saveFile"
+                >
+                    Save
+                </button>
                 Example:
                 <select id="loadExample" class="button"></select>
                 <div class="fscButton" id="codeFSC">⛶</div>
@@ -150,15 +499,23 @@
                 <div id="documentation">
                     <h1>Documentation</h1>
                     <p>
-                        This project is inspired by the "Minimaschine" Albert Wiedemann designed:
-                        <a href="https://schule.awiedemann.de/minimaschine.html">here</a><br />
+                        This project is inspired by the "Minimaschine" Albert
+                        Wiedemann designed:
+                        <a href="https://schule.awiedemann.de/minimaschine.html"
+                            >here</a
+                        ><br />
                         <b>Press Ctrl+E to assemble and run the program </b>
                     </p>
                     <h2>Support</h2>
                     <span style="color: red"
-                        >Defintions: acc = Accumulator | [mem] = Value of a memory cell | op1 = Data provided with the instruction (operator 1) | sp = Stack Pointer</span
+                        >Defintions: acc = Accumulator | [mem] = Value of a
+                        memory cell | op1 = Data provided with the instruction
+                        (operator 1) | sp = Stack Pointer</span
                     >
-                    <p>This project currently only supports the Minimaschine Assembler Instructions (here: mini-asm)</p>
+                    <p>
+                        This project currently only supports the Minimaschine
+                        Assembler Instructions (here: mini-asm)
+                    </p>
                     <h2>Instructions</h2>
                     <table id="strucTable">
                         <thead>
@@ -226,11 +583,18 @@
                                 <td><asm-code>"lang"</asm-code></td>
                                 <td><asm-code>"mini-asm"</asm-code></td>
                                 <td><asm-code>"mini-asm"</asm-code></td>
-                                <td>Support for other types programming languages</td>
+                                <td>
+                                    Support for other types programming
+                                    languages
+                                </td>
                             </tr>
                             <tr>
                                 <td><asm-code>"memSize"</asm-code></td>
-                                <td><asm-code>(&lt;number&gt;"k")|(&lt;number&gt;)</asm-code></td>
+                                <td>
+                                    <asm-code
+                                        >(&lt;number&gt;"k")|(&lt;number&gt;)</asm-code
+                                    >
+                                </td>
                                 <td><asm-code>"5k"</asm-code></td>
                                 <td>The size of the memory</td>
                             </tr>
@@ -244,19 +608,29 @@
                                 <td><asm-code>"mobile"</asm-code></td>
                                 <td><asm-code>""|"legacy"</asm-code></td>
                                 <td><asm-code>""</asm-code></td>
-                                <td>Legacy: IPad Support: Shuffles the different windows around to</td>
+                                <td>
+                                    Legacy: IPad Support: Shuffles the different
+                                    windows around to
+                                </td>
                             </tr>
                             <tr>
                                 <td><asm-code>"cpuSpeed"</asm-code></td>
                                 <td><asm-code>(&lt;number&gt;)</asm-code></td>
                                 <td><asm-code>"1"</asm-code></td>
-                                <td>Prozessor Processing speed: Waitingtime between the major steps in ms</td>
+                                <td>
+                                    Prozessor Processing speed: Waitingtime
+                                    between the major steps in ms
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                     <h2>Project Information</h2>
                     <br />
-                    Contact Information: <a href="mailto://noahp07.schools@gmail.com">noahp07.schools@gmail.com</a> <br />
+                    Contact Information:
+                    <a href="mailto://noahp07.schools@gmail.com"
+                        >noahp07.schools@gmail.com</a
+                    >
+                    <br />
                     Version Changes: <a href="../changelog.html">Changelog</a>
                 </div>
             </div>

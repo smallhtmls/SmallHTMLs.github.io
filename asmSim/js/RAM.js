@@ -21,7 +21,7 @@ export class RAM {
         this.bitCount_i = 0n;
         this.storage = Array.from(
             { length: Number(OPTIONS.getMemSize() / 2n) },
-            (m) => 0n
+            (m) => 0n,
         );
     }
     write(addr_n, data_i) {
@@ -72,7 +72,7 @@ export class RAM {
             (i, b) => {
                 this.storage[i] = b;
                 return { [i]: b };
-            }
+            },
         );
     }
     translateMinimashineAsmKey(val_s, line_n) {
@@ -116,6 +116,7 @@ export class RAM {
             for (let line_s of line_as) {
                 line_for_error_n++;
                 if (line_s == "" || line_s.startsWith(";")) continue;
+                line_s = line_s.split(";")[0];
                 const indx = line_s.indexOf(":");
                 if (indx !== -1) {
                     const tag_s = line_s.substr(0, indx);
@@ -123,9 +124,9 @@ export class RAM {
                     if (context_s.length === 0) {
                         // No context => Jump Point
                         tag_address_m[tag_s] = BigInt(memAddr_n);
-                    } else if (context_s.startsWith("WORD")) {
+                    } else if (context_s.toUpperCase().startsWith("WORD")) {
                         vars_val_m[tag_s] = parseInt(
-                            context_s.substr("WORD".length).trim()
+                            context_s.substr("WORD".length).trim(),
                         );
                     }
                     continue;
@@ -160,7 +161,7 @@ export class RAM {
                     } else {
                         val_i = this.translateMinimashineAsmValue(
                             val_s,
-                            index_n
+                            index_n,
                         );
                     }
                 }
@@ -172,7 +173,7 @@ export class RAM {
         } catch (e) {
             setMessageBox(
                 MESSAGE_BOX_STATUS.ERROR,
-                e + " in line: " + line_for_error_n
+                e + " in line: " + line_for_error_n,
             );
         }
     }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -66,7 +66,11 @@
                             </tr>
                             <tr>
                                 <td><asm-code>"memSize"</asm-code></td>
-                                <td><asm-code>(&lt;number&gt;"k")|(&lt;number&gt;)</asm-code></td>
+                                <td>
+                                    <asm-code
+                                        >(&lt;number&gt;"k")|(&lt;number&gt;)</asm-code
+                                    >
+                                </td>
                                 <td><asm-code>"5k"</asm-code></td>
                             </tr>
                             <tr>
@@ -88,18 +92,42 @@
                 <td>
                     feat: Added Examples and GetStack SetStack<br />
                     <h3>Changes</h3>
-                    - ID Change: <asm-code>"mini@asm"</asm-code> =now> <asm-code>"mini-asm"</asm-code> <br />
-                    - Added mobile mode => key: <asm-code>"mobile"</asm-code> defaults: <asm-code>""</asm-code>; options: <asm-code>"legacy"|""</asm-code><br />
-                    - Added GETSTACK => Loads a value to acc. Memory address is stackpointer - op1<br />
-                    - Added SETSTACK => Stores the value of acc to memory. Memory address is stackpointer - op1
+                    - ID Change: <asm-code>"mini@asm"</asm-code> =now>
+                    <asm-code>"mini-asm"</asm-code> <br />
+                    - Added mobile mode => key:
+                    <asm-code>"mobile"</asm-code> defaults:
+                    <asm-code>""</asm-code>; options:
+                    <asm-code>"legacy"|""</asm-code><br />
+                    - Added GETSTACK => Loads a value to acc. Memory address is
+                    stackpointer - op1<br />
+                    - Added SETSTACK => Stores the value of acc to memory.
+                    Memory address is stackpointer - op1
                 </td>
             </tr>
             <tr>
                 <td>0.0.4</td>
                 <td>
                     German Version now entirely German. English Version under:
-                    <a href="https://smallhtmls.github.io/asmSim-en/">https://smallhtmls.github.io/asmSim/en/</a><br />
-                    Speed control of processor via dial and option (no auto-update)
+                    <a href="https://smallhtmls.github.io/asmSim-en/"
+                        >https://smallhtmls.github.io/asmSim/en/</a
+                    ><br />
+                    Speed control of processor via dial and option (no
+                    auto-update)
+                </td>
+            </tr>
+            <tr>
+                <td>0.0.5</td>
+                <td>
+                    fix: auto complete, code style, comment parsing in code
+                    <h3>Changes</h3>
+                    - fix: auto complete now acts responsive to the code <br />
+                    - fix: the code is now checked by the code styler <br />
+                    (red: error, light green: number, dark green: comments, dark
+                    blue: keyword, dark purple: label)<br />
+                    - feat: Instructions now trigger warnings if the type of the
+                    op1 was not expected <br />
+                    - fix: some comments weren't ignored before e.g.
+                    <asm-code>label: ; This is a label </asm-code>
                 </td>
             </tr>
         </table>
