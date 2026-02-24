@@ -164,7 +164,7 @@ CODE_DESCRIPTION_S.de = {
         "Springt zur Adresse (op1), wenn das Carry-Flag gesetzt ist", // DONE
     [OPCODE.JOV_MEM_NUL]:
         "Springt zur Adresse (op1), wenn das Overflow-Flag gesetzt ist", // DONE
-    [OPCODE.CON_TIN_UE0]: "Ignoriert die Instruktion! – KEINE Operation", // DONE
+    [OPCODE.CON_TIN_UE0]: "Ignoriert die Instruktion! – NO OPeration", // DONE
     [OPCODE.STOP_SYMBOL]: "Stoppt das Programm und setzt den PC zurück", // DONE
     [OPCODE.CAL_LTO_STP]:
         "Speichert den nächsten PC auf dem Stack und springt zur angegebenen Adresse",
