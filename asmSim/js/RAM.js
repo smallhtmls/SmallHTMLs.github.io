@@ -115,8 +115,13 @@ export class RAM {
             let memAddr_n = 0;
             for (let line_s of line_as) {
                 line_for_error_n++;
-                if (line_s == "" || line_s.startsWith(";")) continue;
-                line_s = line_s.split(";")[0];
+                if (
+                    line_s == "" ||
+                    line_s.startsWith(";") ||
+                    line_s.startsWith("#")
+                )
+                    continue;
+                line_s = line_s.split(";")[0].split("#")[0];
                 const indx = line_s.indexOf(":");
                 if (indx !== -1) {
                     const tag_s = line_s.substr(0, indx);
@@ -144,8 +149,13 @@ export class RAM {
             for (let line_s of line_as) {
                 line_for_error_n++;
                 line_s = line_s.trim();
-                if (line_s == "" || line_s.startsWith(";")) continue;
-                line_s = line_s.split(";")[0];
+                if (
+                    line_s == "" ||
+                    line_s.startsWith(";") ||
+                    line_s.startsWith("#")
+                )
+                    continue;
+                line_s = line_s.split(";")[0].split("#")[0];
                 const cols_as = line_s.split(" ");
                 const key_s = cols_as[0].trim();
                 let val_s = cols_as[1];
