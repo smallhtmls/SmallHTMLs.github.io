@@ -50,12 +50,12 @@ export function initEditor(onChange, onInit) {
             tokenizer: {
                 root: [
                     // Comment-only
-                    [/^\s*(;.*)$/, "comment"],
+                    [/^\s*([;#].*)$/, "comment"],
 
                     // Instruction with numeric operand
                     [
                         new RegExp(
-                            `^(\\s*)(${OPCODES})(\\s+)(${NUMBER})(\\s*)(;.*|)$`,
+                            `^(\\s*)(${OPCODES})(\\s+)(${NUMBER})(\\s*)([;#].*|)$`,
                         ),
                         [
                             "white",
@@ -69,7 +69,7 @@ export function initEditor(onChange, onInit) {
                     // Instruction with label operand
                     [
                         new RegExp(
-                            `^(\\s*)(${OPCODES})(\\s+)(${IDENT})(\\s*)(;.*|)$`,
+                            `^(\\s*)(${OPCODES})(\\s+)(${IDENT})(\\s*)([;#].*|)$`,
                         ),
                         [
                             "white",
@@ -81,7 +81,7 @@ export function initEditor(onChange, onInit) {
                         ],
                     ],
                     [
-                        new RegExp(`^(\\s*)(${OPCODES})(\\s*)(;.*|)$`),
+                        new RegExp(`^(\\s*)(${OPCODES})(\\s*)([;#].*|)$`),
                         [
                             "white",
                             "keyword", // opcode only
@@ -92,7 +92,7 @@ export function initEditor(onChange, onInit) {
                     // label: WORD number
                     [
                         new RegExp(
-                            `^(${IDENT})(:)(\\s*)(WORD)(\\s+)(${NUMBER})(\\s*)(;.*|)$`,
+                            `^(${IDENT})(:)(\\s*)(WORD)(\\s+)(${NUMBER})(\\s*)([;#].*|)$`,
                         ),
                         [
                             "regexp", // label
@@ -108,7 +108,9 @@ export function initEditor(onChange, onInit) {
 
                     // label: WORD
                     [
-                        new RegExp(`^(${IDENT})(:)(\\s*)(WORD)(\\s*)(;.*|)$`),
+                        new RegExp(
+                            `^(${IDENT})(:)(\\s*)(WORD)(\\s*)([;#].*|)$`,
+                        ),
                         [
                             "regexp",
                             "delimiter",
@@ -134,7 +136,11 @@ export function initEditor(onChange, onInit) {
                 const beforeCursor = line_s
                     .slice(0, position.column - 1)
                     .trimStart();
-                if (beforeCursor.indexOf(";") != -1) return { suggestions: [] };
+                if (
+                    beforeCursor.indexOf(";") != -1 ||
+                    beforeCursor.indexOf("#") != -1
+                )
+                    return { suggestions: [] };
                 const beforeCursorArr = beforeCursor.split(" ");
                 if (beforeCursorArr[0].endsWith(":")) {
                     return {
@@ -236,7 +242,7 @@ export function initEditor(onChange, onInit) {
                 } else if (
                     z === ASMOP_NOOP &&
                     line_as.length > 1 &&
-                    !line_as[1].startsWith(";")
+                    !(line_as[1].startsWith(";") || line_as[1].startsWith("#"))
                 ) {
                     warnings.push({
                         severity: monaco.MarkerSeverity.Warning,

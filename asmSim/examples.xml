@@ -5,7 +5,7 @@
             <default>
                 <label>(0) Default</label>
                 <code>
-                    ; Dies ist ein Kommentar!
+                    # Dies ist ein Kommentar!
                     LOADI 7
                     ADDI 52
                     SUBI 5
@@ -15,108 +15,108 @@
                     DIVI 9
                     ADD 1
                     XORI 4
-                    HOLD
+                    HALT
                 </code>
             </default>
             <add>
                 <label>(1.1) Addition 3+4</label>
                 <code>
-                    LOADI 3 ; Lädt die Zahl 3 in den Akkumulator
-                    ADDI 4 ; Addiert die 4 als Ganzzahl (int / immediate)
-                    HOLD ; Beendet das Program
+                    LOADI 3 # Lädt die Zahl 3 in den Akkumulator
+                    ADDI 4 # Addiert die 4 als Ganzzahl (int / immediate)
+                    HALT # Beendet das Program
                 </code>
             </add>
             <variable>
                 <label>(1.2) Speicherzellen</label>
                 <code>
-                    LOADI 20 ; Lädt 20 in den Akkumulator
-                    STORE 100 ; Speichert den Akkumulator (20) in Speicherzelle [100]
-                    LOADI 321 ; Lädt 321 in den Akkumulator
-                    STORE 101 ; Speichert den Akkumulator (321) in Speicherzelle [101]
-                    LOADI 42 ; Lädt 42 in den Akkumulator
-                    STORE 102 ; Speichert den Akkumulator (42) in Speicherzelle [102]
-                    ;
-                    LOAD 102 ; Lädt die Zahl in der Speicherzelle [102] in den Akkumulator
-                    ADD 101 ; Addiert die Zahl in der Speicherzelle [101] mit dem Akkumulator
-                    ADDI 1 ; Addiert die Zahl 1
-                    STORE 99 ; Speichert den Akkumulator in Zelle [99]
+                    LOADI 20 # Lädt 20 in den Akkumulator
+                    STORE 100 # Speichert den Akkumulator (20) in Speicherzelle [100]
+                    LOADI 321 # Lädt 321 in den Akkumulator
+                    STORE 101 # Speichert den Akkumulator (321) in Speicherzelle [101]
+                    LOADI 42 # Lädt 42 in den Akkumulator
+                    STORE 102 # Speichert den Akkumulator (42) in Speicherzelle [102]
+                    #
+                    LOAD 102 # Lädt die Zahl in der Speicherzelle [102] in den Akkumulator
+                    ADD 101 # Addiert die Zahl in der Speicherzelle [101] mit dem Akkumulator
+                    ADDI 1 # Addiert die Zahl 1
+                    STORE 99 # Speichert den Akkumulator in Zelle [99]
                 </code>
             </variable>
             <formular>
                 <label>(1.3) Formel: 5*20 / 10 + 3 * 70</label>
                 <code>
-                    ; Zuerst wird die Reihenfolge der Bearbeitung ermittelt:
-                    ; ((5*20) / 10) + (3 * 70)
-                    LOADI 3 ; Lädt 3 in den Akkumulator
-                    MULI 70 ; Multipiziert mit der Zahl 70
-                    STORE 100 ; Das Ergebniss muss zwischengespeichert werden in Zelle [100]
-                    LOADI 5 ; Lädt 5 in den Akkumulator
-                    MULI 20 ; Multipliziert mit der Zahl 20
-                    DIVI 10 ; Dividiert durch die Zahl 10
-                    ADD 100 ; Addiert mit dem Wert der Speicherzelle [100]
-                    HOLD
+                    # Zuerst wird die Reihenfolge der Bearbeitung ermittelt:
+                    # ((5*20) / 10) + (3 * 70)
+                    LOADI 3 # Lädt 3 in den Akkumulator
+                    MULI 70 # Multipiziert mit der Zahl 70
+                    STORE 100 # Das Ergebniss muss zwischengespeichert werden in Zelle [100]
+                    LOADI 5 # Lädt 5 in den Akkumulator
+                    MULI 20 # Multipliziert mit der Zahl 20
+                    DIVI 10 # Dividiert durch die Zahl 10
+                    ADD 100 # Addiert mit dem Wert der Speicherzelle [100]
+                    HALT
                 </code>
             </formular>
             <static-vars>
                 <label>(1.4) Statische Variablen</label>
                 <code>
-                    ; Speicherzellen fest zu addressieren wird unübersichtlich
-                    ; Darum kann (static) int a = 2; auch hier umgesetzt werden:
-                    ;
-                    a_i: WORD 2 ; a_i ist der Name; WORD steht hier für int; 2 ist der Anfangswert
-                    LOADI 7 ; Lädt 7 in den Akkumulator
-                    ADD a_i ; Addiert den Wert der Speicherzelle a_i (2)
-                    MUL a_i ; Multipliziert mit dem Wert der Speicherzelle a_i (2)
-                    HOLD
+                    # Speicherzellen fest zu addressieren wird unübersichtlich
+                    # Darum kann (static) int a = 2# auch hier umgesetzt werden:
+                    #
+                    a_i: WORD 2 # a_i ist der Name# WORD steht hier für int# 2 ist der Anfangswert
+                    LOADI 7 # Lädt 7 in den Akkumulator
+                    ADD a_i # Addiert den Wert der Speicherzelle a_i (2)
+                    MUL a_i # Multipliziert mit dem Wert der Speicherzelle a_i (2)
+                    HALT
 
-                    ; Ergänzung: "STATIC" wird hier benutzt um es von komplexeren
-                    ; Speicheraddressierungsmodellen zu unterscheiden
+                    # Ergänzung: "STATIC" wird hier benutzt um es von komplexeren
+                    # Speicheraddressierungsmodellen zu unterscheiden
                 </code>
             </static-vars>
             <goto>
                 <label>(2.1) GoTo / Jump</label>
                 <code>
-                    LOADI 3 ; Addr. 0-1
-                    ADDI 7 ; Addr. 2-3
-                    JMP 10 ; Jump - Sprint mit dem Program-Zähler (pc) zur Addresse [10]
-                    SUBI 10 ; Addr. 6-7 - Wird übersprungen
-                    MULI 100 ; Addr. 8-9 - Wird übersprungen
-                    DIVI 10 ; Addr. 10-11 - Wird ausgeführt
-                    JMP end ; Addressen Zählen ist umständlich, also setzt man Marker
-                    ADDI 11592 ; Wird übersprungen
-                    DIVI 100 ; Wird übersprungen
-                    MULI 3 ; Wird übersprungen
-                    end: ; Hier der Marker
-                    HOLD
+                    LOADI 3 # Addr. 0-1
+                    ADDI 7 # Addr. 2-3
+                    JMP 10 # Jump - Sprint mit dem Program-Zähler (pc) zur Addresse [10]
+                    SUBI 10 # Addr. 6-7 - Wird übersprungen
+                    MULI 100 # Addr. 8-9 - Wird übersprungen
+                    DIVI 10 # Addr. 10-11 - Wird ausgeführt
+                    JMP end # Addressen Zählen ist umständlich, also setzt man Marker
+                    ADDI 11592 # Wird übersprungen
+                    DIVI 100 # Wird übersprungen
+                    MULI 3 # Wird übersprungen
+                    end: # Hier der Marker
+                    HALT
                 </code>
             </goto>
             <if-condition>
                 <label>(2.2) if-Bedingung
                 </label>
                 <code>
-                    ; Code in Java:
-                    ; int a = 5; if(a == 2) {a += 2;}
+                    # Code in Java:
+                    # int a = 5# if(a == 2) {a += 2#}
                     a_i: WORD 5
                     LOAD a_i
                     CMPI 2
-                    ; Zieht vom Wert des Akkumulators die Zahl 2 ab
-                    ; Das Ergebnis wird nur in den Flags gespeichert
-                    ; Wenn es negativ ist → Setze N Flag
-                    ; Wenn es 0 ist (zero) → Setze Z Flag
+                    # Zieht vom Wert des Akkumulators die Zahl 2 ab
+                    # Das Ergebnis wird nur in den Flags gespeichert
+                    # Wenn es negativ ist → Setze N Flag
+                    # Wenn es 0 ist (zero) → Setze Z Flag
                     JNE if_end
-                    ; Sprint, wenn die Werte bei CMP / CMPI nicht gleich waren
-                    ; Entspricht, Sprint wenn der Zero-Flag nicht gesetzt ist
+                    # Sprint, wenn die Werte bei CMP / CMPI nicht gleich waren
+                    # Entspricht, Sprint wenn der Zero-Flag nicht gesetzt ist
                     ADDI 2
                     if_end:
                     STORE a_i
-                    HOLD
+                    HALT
                 </code>
             </if-condition>
             <while-loop>
                 <label>(2.3) while-Schleife</label>
                 <code>
-                    ; Code in Java:
-                    ; int b = 0; int a = 15; while(a > 5) {a--;b++;}
+                    # Code in Java:
+                    # int b = 0# int a = 15# while(a > 5) {a--#b++#}
                     b_i: WORD 0
                     a_i: WORD 15
 
@@ -131,17 +131,17 @@
                     STORE b_i
                     JMP while1_start
                     while1_end:
-                    HOLD
+                    HALT
 
-                    ;Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber
-                    ; (fast) gleich für den Prozessor
+                    #Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber
+                    # (fast) gleich für den Prozessor
                 </code>
             </while-loop>
             <for-loop>
                 <label>(2.4) for-Schleife</label>
                 <code>
-                    ; Code in Java:
-                    ; int b = 0; int a = 15; while(a > 5) {a--;b++;}
+                    # Code in Java:
+                    # int b = 0# int a = 15# while(a > 5) {a--#b++#}
                     b_i: WORD 0
                     a_i: WORD 15
 
@@ -156,10 +156,10 @@
                     STORE b_i
                     JMP while1_start
                     while1_end:
-                    HOLD
+                    HALT
 
-                    ;Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber
-                    ; (fast) gleich für den Prozessor
+                    #Ergänzung: for und while loops machen den Code übersichtlicher, sehen aber
+                    # (fast) gleich für den Prozessor
                 </code>
             </for-loop>
             <example-power>
@@ -180,44 +180,44 @@
                     JMP while1_start
                     while1_end:
                     LOAD ret_i
-                    HOLD
+                    HALT
                 </code>
             </example-power>
             <example-parser>
                 <label>(2.6) Encodigung lösen</label>
                 <code>
-                    hexcode_i: WORD 10 ; Hex encodierte Zahl (zur Basis 16)
-                    basis_i: WORD 16 ; Zahl zur Basis
-                    factor_i: WORD 1 ; Faktor für die Stelle
-                    ret_i: WORD 0 ; Rückgabewert (return)
+                    hexcode_i: WORD 10 # Hex encodierte Zahl (zur Basis 16)
+                    basis_i: WORD 16 # Zahl zur Basis
+                    factor_i: WORD 1 # Faktor für die Stelle
+                    ret_i: WORD 0 # Rückgabewert (return)
 
                     start:
-                    ; solange Stellen übrig sind
+                    # solange Stellen übrig sind
                     LOAD hexcode_i
                     CMPI 0
                     JLE end
-                    MODI 10 ; Nur die letzte Stelle in den Akkumulator
-                    MUL factor_i ; Multipliziere mit dem Faktor
-                    ADD ret_i ; Füge es dem Ergebnis hinzu
+                    MODI 10 # Nur die letzte Stelle in den Akkumulator
+                    MUL factor_i # Multipliziere mit dem Faktor
+                    ADD ret_i # Füge es dem Ergebnis hinzu
                     STORE ret_i
-                    ; Erhöhe dem Faktor für die nächste Stelle
+                    # Erhöhe dem Faktor für die nächste Stelle
                     LOAD factor_i
                     MUL basis_i
                     STORE factor_i
-                    ; Entferne die letzte Stelle des Codes
+                    # Entferne die letzte Stelle des Codes
                     LOAD hexcode_i
                     DIVI 10
                     STORE hexcode_i
                     JMP start
                     end:
                     LOAD ret_i
-                    HOLD
+                    HALT
                 </code>
             </example-parser>
             <stack-usage>
                 <label>(3.0) Stack (Stapelspeicher)</label>
                 <code>
-                    ; Bitte hierzu den Stack-Pointer aktivieren
+                    # Bitte hierzu den Stack-Pointer aktivieren
                     LOADI 7
                     PUSH
                     LOADI 2
@@ -230,18 +230,18 @@
                     ADDI 7
                     SETSTACK -1
                     POP
-                    HOLD
+                    HALT
                 </code>
             </stack-usage>
             <second-register>
                 <label>(3.1) Zweites Register</label>
                 <code>
-                    ; Bitte hierzu das Register BX aktivieren
-                    LOADBI 20 ; Lädt 20 in das BX Register
-                    LOADI 5 ; Lädt 5 in den Akkumulator
-                    ADDI 5 ; Addiert 5 auf dem Akkumulator
-                    XCHG ; Tauscht die Werte des Akkumulators und BX
-                    STOREB 100 ; Speichert den Wert von BX in Speicherzelle [100]
+                    # Bitte hierzu das Register BX aktivieren
+                    LOADBI 20 # Lädt 20 in das BX Register
+                    LOADI 5 # Lädt 5 in den Akkumulator
+                    ADDI 5 # Addiert 5 auf dem Akkumulator
+                    XCHG # Tauscht die Werte des Akkumulators und BX
+                    STOREB 100 # Speichert den Wert von BX in Speicherzelle [100]
                 </code>
             </second-register>
             <pow-function>
@@ -250,7 +250,7 @@
                     LOADI 4
                     LOADBI 2
                     CALL tut_etwas
-                    HOLD
+                    HALT
                     tut_etwas:
                     ADDI 2
                     MULI 5
@@ -265,10 +265,10 @@
                 <code>
                     class Main{
                     public static void main(){
-                    System.out.println("Hello!");
-                    a+b;
-                    ()->{System.out.println("Hi");
-                    };
+                    System.out.println("Hello!")#
+                    a+b#
+                    ()->{System.out.println("Hi")#
+                    }#
                     }
                     }
                 </code>
@@ -278,8 +278,8 @@
                 <code>
                     class Main{
                     public static void main(){
-                    int a = 2; a+=3;
-                    System.exit(a);
+                    int a = 2# a+=3#
+                    System.exit(a)#
                     }
                     }
                 </code>

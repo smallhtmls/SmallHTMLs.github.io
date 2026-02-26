@@ -103,7 +103,12 @@ let operatorOrder = [
     OPERATOR_SET,
     OPERATOR_ARROW,
 ];
-const JAVA_ATTRIBUTE = [PARAM_PUBLIC, PARAM_PRIVATE, PARAM_PROTECTED, PARAM_STATIC];
+const JAVA_ATTRIBUTE = [
+    PARAM_PUBLIC,
+    PARAM_PRIVATE,
+    PARAM_PROTECTED,
+    PARAM_STATIC,
+];
 
 export class Iterator {
     constructor(tks) {
@@ -136,22 +141,43 @@ export class Iterator {
     }
     isAccess() {
         const tok = this.get();
-        return tok === PARAM_PUBLIC || tok === PARAM_PRIVATE || tok === PARAM_PROTECTED;
+        return (
+            tok === PARAM_PUBLIC ||
+            tok === PARAM_PRIVATE ||
+            tok === PARAM_PROTECTED
+        );
     }
     isDt() {
         const tok = this.get();
-        return tok === DATATYPE_BOOLEAN || tok === DATATYPE_INT || tok === DATATYPE_LONG || tok === DATATYPE_VOID || tok === DATATYPE_STRING;
+        return (
+            tok === DATATYPE_BOOLEAN ||
+            tok === DATATYPE_INT ||
+            tok === DATATYPE_LONG ||
+            tok === DATATYPE_VOID ||
+            tok === DATATYPE_STRING
+        );
     }
     isInside() {
         return this.index >= 0 && this.index < this.tokens.length;
     }
     isTerminator() {
         const c = this.get();
-        return c === PARAM_END || c === PARAM_CURLY_CLOSE || c === PARAM_ROUND_CLOSE || c === PARAM_SQUARE_CLOSE || c === PARAM_COMMA;
+        return (
+            c === PARAM_END ||
+            c === PARAM_CURLY_CLOSE ||
+            c === PARAM_ROUND_CLOSE ||
+            c === PARAM_SQUARE_CLOSE ||
+            c === PARAM_COMMA
+        );
     }
     skipTerminalSymbols(inc = true) {
         const currChar = this.get();
-        if (currChar !== PARAM_CURLY_OPEN && currChar !== PARAM_ROUND_OPEN && currChar !== PARAM_SQUARE_OPEN) return false;
+        if (
+            currChar !== PARAM_CURLY_OPEN &&
+            currChar !== PARAM_ROUND_OPEN &&
+            currChar !== PARAM_SQUARE_OPEN
+        )
+            return false;
         const inverse = getInverseBracket(currChar);
         this.inc();
         while (this.get() != inverse) {
@@ -222,7 +248,12 @@ function tokenJava(txt) {
             rt.push(txt.substr(start, i - start));
             continue;
         }
-        if (txt[i] === " " || txt[i] === "\t" || txt[i] === "\n" || txt[i] === "\r") {
+        if (
+            txt[i] === " " ||
+            txt[i] === "\t" ||
+            txt[i] === "\n" ||
+            txt[i] === "\r"
+        ) {
             rt.push("");
             continue;
         }
@@ -241,13 +272,16 @@ function tokenJava(txt) {
             i += JAVA_TOKENS[longest].length - 1;
             continue;
         }
-        if (rt[rt.length - 1].constructor.name !== "String" || rt[rt.length - 1][0] === STRING_SYMBOL) {
+        if (
+            rt[rt.length - 1].constructor.name !== "String" ||
+            rt[rt.length - 1][0] === STRING_SYMBOL
+        ) {
             rt.push("");
         }
         type = isName;
         rt[rt.length - 1] += txt[i];
     }
-    rt = rt.filter(v => !(v.constructor.name === "String" && v.length === 0));
+    rt = rt.filter((v) => !(v.constructor.name === "String" && v.length === 0));
     return rt;
 }
 class Container {
@@ -256,7 +290,10 @@ class Container {
     }
     compile(it) {
         while (it.isInside()) {
-            if (it.get() === TOKEN_START || JAVA_ATTRIBUTE.indexOf(it.get()) != -1) {
+            if (
+                it.get() === TOKEN_START ||
+                JAVA_ATTRIBUTE.indexOf(it.get()) != -1
+            ) {
                 it.inc();
                 continue;
             }
@@ -326,7 +363,13 @@ class JavaClass extends Container {
         return super.compile(it);
     }
     show(depth) {
-        return "".padStart(depth, "#") + "Class: " + this.name + "\n" + super.show(depth);
+        return (
+            "".padStart(depth, "#") +
+            "Class: " +
+            this.name +
+            "\n" +
+            super.show(depth)
+        );
     }
 }
 class OperatorVariable {
@@ -337,7 +380,13 @@ class OperatorVariable {
         return "OperatorVar(" + this.nmb + ")";
     }
     show(depth) {
-        return "".padStart(depth, "#") + "Variable: " + this.name + "\n" + super.show(depth);
+        return (
+            "".padStart(depth, "#") +
+            "Variable: " +
+            this.name +
+            "\n" +
+            super.show(depth)
+        );
     }
 }
 class InlineContainer extends Container {
@@ -389,7 +438,16 @@ class Operator {
         this.left = left;
     }
     show(depth) {
-        return "".padStart(depth, "#") + " (" + this.left + ") " + JAVA_TOKENS[this.operator] + " (" + this.right + ") \n";
+        return (
+            "".padStart(depth, "#") +
+            " (" +
+            this.left +
+            ") " +
+            JAVA_TOKENS[this.operator] +
+            " (" +
+            this.right +
+            ") \n"
+        );
     }
 }
 class OperatorSequence {
@@ -423,7 +481,9 @@ class OperatorSequence {
                         this.boxes.push(new InlineContainer().compile(opIt));
                         opIt.store();
                         opIt.loadPos(pos);
-                        opIt.replaceHereToStore(new OperatorVariable(this.boxes.length - 1));
+                        opIt.replaceHereToStore(
+                            new OperatorVariable(this.boxes.length - 1),
+                        );
                         break;
                     case PARAM_SQUARE_OPEN:
                     case PARAM_ROUND_OPEN:
@@ -434,10 +494,17 @@ class OperatorSequence {
                         if (isParam && operator === PARAM_ROUND_OPEN) {
                             this.boxes.push(new MethodCall().compile(opIt));
                             pos--;
-                        } else this.boxes.push(new OperatorSequence(operator === PARAM_SQUARE_OPEN).compile(opIt));
+                        } else
+                            this.boxes.push(
+                                new OperatorSequence(
+                                    operator === PARAM_SQUARE_OPEN,
+                                ).compile(opIt),
+                            );
                         opIt.store();
                         opIt.loadPos(pos);
-                        opIt.replaceHereToStore(new OperatorVariable(this.boxes.length - 1));
+                        opIt.replaceHereToStore(
+                            new OperatorVariable(this.boxes.length - 1),
+                        );
                         break;
                     default:
                         const op = new Operator(operator);
@@ -506,7 +573,9 @@ class JavaVariable {
         throw "Var not ;";
     }
     show(depth) {
-        return "".padStart(depth, "#") + " Variable: " + this.name + this.setup ? " => \n" + this.setup.show(depth + 2) : "";
+        return "".padStart(depth, "#") + " Variable: " + this.name + this.setup
+            ? " => \n" + this.setup.show(depth + 2)
+            : "";
     }
 }
 class JavaMethod extends Container {
@@ -539,7 +608,13 @@ class JavaMethod extends Container {
         return super.compile(it);
     }
     show(depth) {
-        return "".padStart(depth, "#") + "Method: " + this.name + "\n" + super.show(depth);
+        return (
+            "".padStart(depth, "#") +
+            "Method: " +
+            this.name +
+            "\n" +
+            super.show(depth)
+        );
     }
 }
 
@@ -557,7 +632,7 @@ function cpJava(strct) {
             buildMethodJava(innerClass);
         }
     }
-    return rt + "\nHOLD";
+    return rt + "\nHALT";
 }
 
 export function compileJava(txt) {
