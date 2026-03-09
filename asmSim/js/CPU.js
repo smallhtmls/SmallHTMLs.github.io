@@ -401,6 +401,66 @@ class CPU {
                 this.bxAccess.set(ax);
                 this.axAccess.set(bx);
                 break;
+            //
+            // Strange Move Instructions
+            //
+            case OPCODE.MOV_ARF_ACC:
+                calcDat_i = this.axAccess.get();
+                this.axAccess.set(
+                    this.ram.read(Number(calcDat_i + this.instructionData_i)),
+                );
+                break;
+            case OPCODE.MOV_BRF_ACC:
+                calcDat_i = this.bxAccess.get();
+                this.axAccess.set(
+                    this.ram.read(Number(calcDat_i + this.instructionData_i)),
+                );
+                break;
+
+            case OPCODE.MOV_ARF_BX:
+                calcDat_i = this.axAccess.get();
+                this.bxAccess.set(
+                    this.ram.read(Number(calcDat_i + this.instructionData_i)),
+                );
+                break;
+
+            case OPCODE.MOV_BRF_BX:
+                calcDat_i = this.bxAccess.get();
+                this.bxAccess.set(
+                    this.ram.read(Number(calcDat_i + this.instructionData_i)),
+                );
+                break;
+            //
+            //
+            //
+            case OPCODE.MOV_ACC_ARF:
+                calcDat_i = this.axAccess.get();
+                this.ram.write(
+                    Number(calcDat_i + this.instructionData_i),
+                    this.axAccess.get(),
+                );
+                break;
+            case OPCODE.MOV_ACC_BRF:
+                calcDat_i = this.bxAccess.get();
+                this.ram.write(
+                    Number(calcDat_i + this.instructionData_i),
+                    this.axAccess.get(),
+                );
+                break;
+            case OPCODE.MOV_BX_ARF:
+                calcDat_i = this.axAccess.get();
+                this.ram.write(
+                    Number(calcDat_i + this.instructionData_i),
+                    this.bxAccess.get(),
+                );
+                break;
+            case OPCODE.MOV_BX_BRF:
+                calcDat_i = this.bxAccess.get();
+                this.ram.write(
+                    Number(calcDat_i + this.instructionData_i),
+                    this.bxAccess.get(),
+                );
+                break;
         }
     }
 
