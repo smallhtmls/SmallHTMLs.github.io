@@ -20,8 +20,19 @@ export const REGISTER = {
 
 export const OPCODE = {
     STOP_SYMBOL: 0x00n, // NOT INTELx86
-    MOV_VAL_ACC: 0xb8n, // INTELx86 mov ax, <op1>
-    MOV_MEM_ACC: 0xa1n, // INTELx86 mov ax, [<addr>]
+    MOV_VAL_ACC: 0xb8n, // INTELx86 mov eax, <op1>
+    MOV_MEM_ACC: 0xa1n, // INTELx86 mov eax, [<op1>]
+
+    MOV_ARF_ACC: 0x8b00n, // INTELx86 mov eax,[eax]  LOADADR-A
+    MOV_BRF_ACC: 0x8b03n, // INTELx86 mov eax,[ebx]  LOADADR-B
+    MOV_BRF_BX: 0x8b1bn, // INTELx86 mov ebx,[ebx]  LOADADRB-B
+    MOV_ARF_BX: 0x8b18n, // INTELx86 mov ebx,[eax]  LOADADRB-A
+
+    MOV_ACC_BRF: 0x8903n, // INTELx86 mov [ebx],eax  STOREADR-B
+    MOV_BX_ARF: 0x8918n, // INTELx86 mov [eax],ebx  STOREADRB-A
+    MOV_ACC_ARF: 0x8900n, // INTELx86 mov [eax],eax  STOREADR-A
+    MOV_BX_BRF: 0x891bn, // INTELx86 mov [ebx],ebx  STOREADRB-B
+
     MOV_ACC_MEM: 0xa3n, // INTELx86 mov [<addr>], ax
     ADD_ACC_MEM: 0x0306n, // INTELx86 add ax, [<addr>]
     SUB_ACC_MEM: 0x2b06n, // INTELx86 sub ax, [<addr>]
@@ -185,6 +196,20 @@ CODE_DESCRIPTION_S.de = {
         "Lädt einen Wert in den acc. Speicheradresse ist Stackpointer - op1",
     [OPCODE.MOV_SP_MEM]:
         "Speichert den Wert des acc im Speicher. Speicheradresse ist Stackpointer - op1",
+    //
+    [OPCODE.MOV_ARF_ACC]:
+        "Lädt einen Wert von Speicheraddresse [acc + op1] in den acc",
+    [OPCODE.MOV_BRF_ACC]:
+        "Lädt einen Wert von Speicheraddresse [bx + op1] in den acc",
+    [OPCODE.MOV_BRF_BX]:
+        "Lädt einen Wert von Speicheraddresse [acc + op1] in den bx",
+    [OPCODE.MOV_ARF_BX]:
+        "Lädt einen Wert von Speicheraddresse [bx + op1] in den bx",
+    //
+    [OPCODE.MOV_ACC_BRF]: "Speichert den acc in Speicheraddresse [bx + op1]",
+    [OPCODE.MOV_ACC_ARF]: "Speichert den acc in Speicheraddresse [acc + op1]",
+    [OPCODE.MOV_BX_ARF]: "Speichert den bx in Speicheraddresse [acc + op1]",
+    [OPCODE.MOV_BX_BRF]: "Speichert den bx in Speicheraddresse [bx + op1]",
 };
 
 CODE_DESCRIPTION_S.en = {
@@ -266,6 +291,23 @@ CODE_DESCRIPTION_S.en = {
         "Loads a value to acc. Memory address is stackpointer - op1",
     [OPCODE.MOV_SP_MEM]:
         "Stores the value of acc to memory. Memory address is stackpointer - op1",
+    //
+    [OPCODE.MOV_ARF_ACC]:
+        "Loads the value of the memoryaddress [acc + op1] into acc",
+    [OPCODE.MOV_BRF_ACC]:
+        "Loads the value of the memoryaddress [bx + op1] into acc",
+    [OPCODE.MOV_BRF_BX]:
+        "Loads the value of the memoryaddress [bx + op1] into bx",
+    [OPCODE.MOV_ARF_BX]:
+        "Loads the value of the memoryaddress [acc + op1] into bx",
+    //
+    [OPCODE.MOV_ACC_BRF]:
+        "Stores the value of acc into memoryaddress [bx + op1]",
+    [OPCODE.MOV_ACC_ARF]:
+        "Stores the value of acc into memoryaddress [acc + op1]",
+    [OPCODE.MOV_BX_ARF]:
+        "Stores the value of bx into memoryaddress [acc + op1]",
+    [OPCODE.MOV_BX_BRF]: "Stores the value of bx into memoryaddress [bx + op1]",
 };
 
 export const MINIMASHINE_ASM_DECODE_TABLE_S = {
@@ -332,6 +374,16 @@ export const MINIMASHINE_ASM_DECODE_TABLE_S = {
     [OPCODE.XCHG_ACC_BX]: "XCHG",
     [OPCODE.MOV_MEM_SP]: "GETSTACK",
     [OPCODE.MOV_SP_MEM]: "SETSTACK",
+    //
+    [OPCODE.MOV_ARF_ACC]: "LOAD-MEMACC",
+    [OPCODE.MOV_BRF_ACC]: "LOAD-MEMBX",
+    [OPCODE.MOV_BRF_BX]: "LOADB-MEMBX",
+    [OPCODE.MOV_ARF_BX]: "LOADB-MEMACC",
+    //
+    [OPCODE.MOV_ACC_BRF]: "STORE-MEMBX",
+    [OPCODE.MOV_ACC_ARF]: "STORE-MEMACC",
+    [OPCODE.MOV_BX_ARF]: "STOREB-MEMACC",
+    [OPCODE.MOV_BX_BRF]: "STOREB-MEMBX",
 };
 
 export const ASMOP_NOOP = 0;
@@ -403,4 +455,14 @@ export const MINIMASHINE_ASM_OPERATOR_AMOUNT = {
     [OPCODE.XCHG_ACC_BX]: ASMOP_NOOP,
     [OPCODE.MOV_MEM_SP]: ASMOP_NUM,
     [OPCODE.MOV_SP_MEM]: ASMOP_NUM,
+    //
+    [OPCODE.MOV_ARF_ACC]: ASMOP_NUM,
+    [OPCODE.MOV_BRF_ACC]: ASMOP_NUM,
+    [OPCODE.MOV_BRF_BX]: ASMOP_NUM,
+    [OPCODE.MOV_ARF_BX]: ASMOP_NUM,
+    //
+    [OPCODE.MOV_ACC_BRF]: ASMOP_NUM,
+    [OPCODE.MOV_ACC_ARF]: ASMOP_NUM,
+    [OPCODE.MOV_BX_ARF]: ASMOP_NUM,
+    [OPCODE.MOV_BX_BRF]: ASMOP_NUM,
 };
